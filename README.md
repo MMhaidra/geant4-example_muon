@@ -1,46 +1,22 @@
-# geant4-example_Ps
-This is a repository for gean4 code based on "Positronium fine structure measurement geometry test" developed by @mzks 
+# README
 
----  
-(oritinal README)
-## mc - Geant4 example
+Created on Sep.27th, 2018.
 
-This is an example of Geant4 simulation for experiment.
+# Reference
+[Geant4 Training at Desy Zeuthen, 2011/3 (Geant4 and Calorimetry in HEP)](https://www-zeuthen.desy.de/geant4/g4course2011/day1/overview.html) > [Day 2 Basics of Geant4](https://www-zeuthen.desy.de/geant4/g4course2011/day2/index.html) > [Proxesses and Particles](https://www-zeuthen.desy.de/geant4/g4course2011/day2/4_particlesNprocesses/index.html)
 
-### Features
-
-- Prepare materials
-- Output for ROOT tree
-
-### Usage
-#### Install
+# How to get source files?
 ```
-$git clone https://github.com/mzks/mc
-```
-for Positronium experiment, `$git checkout ps`.
-
-#### Run
-```
->mkdir build
->cd build
->cmake ../source && make install
->cd ../bench
-```
-GUI mode
-```
->../bin/mc
+wget http://www.ifh.de/geant4/g4course2011/day2d.tgz
 ```
 
-Batch mode
-```
->../bin/mc bat.mac
-```
+# How changed?
 
-### Requirement
-- Geant4.10.4
-- ROOT6
+- Geometry -> copy number:0-127 "Sensor", EJ-200
+- Muon beam
 
-You can run easily, without installing ROOT and Geant4 using virtual machine.
-https://wiki.kek.jp/display/geant4/Geant4+Virtual+Machine
-When you use this virtual machine, you have to do $source `>$ROOTSYS/bin/thisroot.sh` before running.
-
+# Schedule
+- Add muon libraries to PhysicsList
+- Generate muon beam
+- Change detector geometry
+- Change detector materials
