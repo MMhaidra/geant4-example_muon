@@ -22,12 +22,14 @@
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 
+#include "G4NistManager.hh" // [yy] for use of G4materials
+
 #include <iostream>
 
 mcDetectorConstruction::mcDetectorConstruction()
-:defaultMaterial(0),sensorMaterial(0),
+://defaultMaterial(0),sensorMaterial(0),
 WorldRadius(100*cm),
-solidWorld(0),logicWorld(0),physWorld(0),
+//solidWorld(0),logicWorld(0),physWorld(0),
 solidSensor(0),logicSensor(0),physSensor(0),
 magField(0),pUserLimits(0),maxStep(100.0*cm)
 {
@@ -35,10 +37,11 @@ magField(0),pUserLimits(0),maxStep(100.0*cm)
     // default parameter values of Sensor
     DefineMaterials();
     
-    SetSensorMaterial("NaI");
+    //SetSensorMaterial("NaI"); // [yy] comment
+    //SetSensorMaterial("GAGG"); // [yy] comment
     
     // create commands for interactive definition of the calorimeter
-    detectorMessenger = new mcDetectorMessenger(this);
+    //detectorMessenger = new mcDetectorMessenger(this); // [yy] comment
 }
 
 mcDetectorConstruction::~mcDetectorConstruction()
@@ -56,26 +59,220 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     G4LogicalVolumeStore::GetInstance()->Clean();
     G4SolidStore::GetInstance()->Clean();
     
-    // create geometry
+    /* -------------------------------------------------------------------- */
+    // Create geometry
     
-    // World
-    solidWorld = new G4Orb("World",WorldRadius);
-    logicWorld = new G4LogicalVolume(solidWorld,     //its solid
-                                     defaultMaterial,//its material
-                                     "World");		 //its name
+   // --- Overview of geometry ---
+   // world - module -  scabox  - Sensor* (copy no.: 0-63)
+   //                             absbox  - Sensor* (copy no: 64-127)    
+   // * means "Sensitive Detector"
+   
+     // --- Parameters for geometry ---
+
+  // world
+  G4double world_sizeX = 100*cm; 
+  G4double world_sizeY = 100*cm; 
+  G4double world_sizeZ = 100*cm;
+  WorldRadius = world_sizeX;
+
+  // scabox
+  G4double scabox_sizeX =     30.0  *mm;  // > scavoxel_sizeX
+  G4double scabox_sizeY =     24.0  *mm;  // > scavoxel_pitchY*number_of_scavoxel_dimY
+  G4double scabox_sizeZ =     24.0  *mm;  // > scavoxel_pitchZ*number_of_scavoxel_dimZ
+
+  // Sensor
+  G4double scavoxel_sizeX =   30.0  *mm;
+  G4double scavoxel_sizeY =     2.0  *mm;
+  G4double scavoxel_sizeZ =     2.0  *mm;
+  G4double scavoxel_pitchY =    3.0  *mm;
+  G4double scavoxel_pitchZ =    3.0  *mm;
+  G4int number_of_scavoxel_dimY  =   8; 
+  G4int number_of_scavoxel_dimZ  =   8; 
+
+  // absbox
+  G4double absbox_sizeX =   30.0  *mm;  // > absvoxel_sizeX
+  G4double absbox_sizeY =   24.0  *mm;  // > absvoxel_pitchY*number_of_absvoxel_dimY
+  G4double absbox_sizeZ =   24.0  *mm;  // > absvoxel_pitchZ*number_of_absvoxel_dimZ
+  // absvoxel
+  G4double absvoxel_sizeX =    30.0  *mm;
+  G4double absvoxel_sizeY =      2.0  *mm;
+  G4double absvoxel_sizeZ =      2.0  *mm;
+  G4double absvoxel_pitchY =     3.0  *mm;
+  G4double absvoxel_pitchZ =     3.0  *mm;
+  G4int number_of_absvoxel_dimY  =  8; 
+  G4int number_of_absvoxel_dimZ  =  8;  
     
-    physWorld = new G4PVPlacement(0,			     //no rotation
-                                  G4ThreeVector(),	 //at (0,0,0)
-                                  logicWorld,		 //its logical volume
-                                  "World",		     //its name
-                                  0,			     //its mother  volume
-                                  false,			 //no boolean operation
-                                  0);			     //copy number
+    // distances
+    G4double distance_source_sca  = 100.0  *mm; // distance between scatter and origin(0,0,0)
+    G4double distance_sca_abs        =  80.0  *mm; // distance between absorber and scatter
+
+    // module
+    G4double module_sizeX = scabox_sizeX+distance_sca_abs+absbox_sizeX; 
+    G4double module_sizeY = absbox_sizeY; // under supposition that scabox and absbos are same  
+    G4double module_sizeZ = absbox_sizeZ; // under supposition that scabox and absbos are same  
+
+    // if create multiple modules as circle
+    //G4int number_of_modules = 1;  // 1: single Compton camera module
+    //G4double angle_rot_modules = 360.0/number_of_modules *deg;
     
+    // -- World
+    // solid definition (size)
+    G4Box* solidWorld =  new G4Box("World",                     // its name
+	                                                       0.5*world_sizeX, 0.5*world_sizeY, 0.5*world_sizeZ);      // its size
+  
+    // logical volume definition (material)
+    G4LogicalVolume* logicWorld =                         
+    new G4LogicalVolume(
+                        solidWorld,          // its solid
+                        Air,                 // its material
+                        "World");            // its name
+
+  // physical volume definition (position, relation, copy number)
+  G4VPhysicalVolume* physWorld = 
+    new G4PVPlacement(
+                      0,                                // no rotation
+                      G4ThreeVector(),       // at (0,0,0)
+                      logicWorld,          // its logical volume
+                      "World",               // its name
+                      0,                         // its mother  volume
+                      false,                   // no boolean operation
+                      0,                         // copy number
+                      false);       // checking overlaps 
+
+  // --- Module
+  
+  // solid definition (size)
+  G4Box* solidModule =    
+    new G4Box("Module",                       // its name
+	      0.5*module_sizeX, 0.5*module_sizeY, 0.5*module_sizeZ); // its size
+
+  // logical volume definition (material)
+  G4LogicalVolume* logicModule =                         
+    new G4LogicalVolume(solidModule,          // its solid
+                        Air,                  // its material
+                        "Module");            // its name
+
+    // physical volume definition (position, relation, copy number)
+    G4VPhysicalVolume* physModule = 
+    new G4PVPlacement(0,         // no rotation
+                      G4ThreeVector((distance_source_sca+module_sizeX*0.5),0,0),
+                      logicModule,          // its logical volume
+                      "Module",               // its name
+                      logicWorld,            // its mother  volume
+                      false,                 // no boolean operation
+                      0,                       // copy number
+                      false);                // checking overlaps 
+                      
+  /* // if create multiple modules as circle
+  for (G4int i = 0; i < number_of_modules ; i++) {
+  
+    G4ThreeVector armVec= G4ThreeVector((distance_source_sca+module_sizeX*0.5),0,0);
+    G4RotationMatrix armRot= G4RotationMatrix();
+    armVec.rotateZ(i*angle_rot_modules);
+    armRot.rotateZ(i*angle_rot_modules);
+  
+    new G4PVPlacement(G4Transform3D(armRot, armVec),    
+                      logicModule,          // its logical volume
+                      "Module",               // its name
+                      logicWorld,            // its mother  volume
+                      false,                 // no boolean operation
+                      i,                       // copy number
+                      true);                // checking overlaps 
+   }
+   */
+   
+
+  // -- scatter box
+
+  // solid definition (size)
+  G4Box* solidScabox =    
+    new G4Box("Scabox",                       // its name
+	      0.5*scabox_sizeX, 0.5*scabox_sizeY, 0.5*scabox_sizeZ); // its size
+  
+  // logical volume definition (material)
+  G4LogicalVolume* logicScabox =                         
+    new G4LogicalVolume(solidScabox,          // its solid
+                        Air,              // its material 
+                        "Scabox");            // its name
+
+  new G4PVPlacement(0,                        // no rotation
+                      G4ThreeVector(scabox_sizeX*0.5 - module_sizeX*0.5, 0, 0),  
+                      logicScabox,            // its logical volume
+                      "Scabox",               // its name
+                      logicModule,            // its mother  volume
+                      false,                  // no boolean operation
+                      0,                      // copy number
+                      true);        // checking overlaps 
+
+  // -- absober box
+
+  // solid definition (size)
+  G4Box* solidAbsbox =    
+    new G4Box("Absbox",                       // its name
+	      0.5*absbox_sizeX, 0.5*absbox_sizeY, 0.5*absbox_sizeZ); // its size
+  
+  // logical volume definition (material)
+   G4LogicalVolume* logicAbsbox =                         
+    new G4LogicalVolume(solidAbsbox,          // its solid
+                        Air,                  // its material
+                        "Absbox");            // its name
+
+  // physical volume definition (position, relation, copy number)
+    new G4PVPlacement(0,                      // no rotation
+                      G4ThreeVector(module_sizeX*0.5 - absbox_sizeX*0.5, 0, 0),      
+                      logicAbsbox,            // its logical volume
+                      "Absbox",               // its name
+                      logicModule,             // its mother  volume
+                      false,                  // no boolean operation
+                      1,                      // copy number
+                      true);        // checking overlaps 
+  
+  // -- scatter voxel
+
+  // solid definition (size)
+  solidSensor =    
+    new G4Box("Sensor",                       // its name
+	                    0.5*scavoxel_sizeX, 0.5*scavoxel_sizeY, 0.5*scavoxel_sizeZ); // its size
+  
+  // logical volume definition (material)
+  logicSensor =                         
+    new G4LogicalVolume(solidSensor,          // its solid
+                        EJ200,                   // its material
+                        "Sensor");            // its name
+
+  // physical volume definition (position, relation, copy number)
+  for (G4int i = 0; i < number_of_scavoxel_dimY ; i++) {
+    for (G4int j = 0; j < number_of_scavoxel_dimZ ; j++) {
+       new G4PVPlacement(0,                     // no rotation
+                      G4ThreeVector(0,(i+0.5)*scavoxel_pitchY-scabox_sizeY*0.5,(j+0.5)*scavoxel_pitchZ-scabox_sizeZ*0.5), //location
+                      logicSensor,            // its logical volume
+                      "Sensor",               // its name
+                      logicScabox,              // its mother  volume
+                      false,                    // no boolean operation
+                      i*number_of_scavoxel_dimZ+j,      // copy number
+                      true);                       // checking overlaps
+    }
+  } 
+
+  // physical volume definition (position, relation, copy number)
+  for (G4int i = 0; i < number_of_absvoxel_dimY ; i++) {
+    for (G4int j = 0; j < number_of_absvoxel_dimZ ; j++) {
+      new G4PVPlacement(0,                    // no rotation
+                      G4ThreeVector(0,(i+0.5)*absvoxel_pitchY-absbox_sizeY*0.5,(j+0.5)*absvoxel_pitchZ-absbox_sizeZ*0.5), // location
+                      logicSensor,          // its logical volume
+                      "Sensor",             // its name
+                      logicAbsbox,            // its mother  volume
+                      false,                  // no boolean operation
+                      i*number_of_absvoxel_dimZ+j + number_of_scavoxel_dimY*number_of_scavoxel_dimZ,  // copy number
+                      true);        // checking overlaps
+    }
+  } 
+   
+   /*
     // Sensor
     G4RotationMatrix matSensor  = G4RotationMatrix();
     solidSensor = new G4Tubs("Sensor",0.0*cm,5.*cm,10*cm,0,CLHEP::twopi);
-    logicSensor = new G4LogicalVolume(solidSensor,sensorMaterial,"Sensor");
+    logicSensor = new G4LogicalVolume(solidSensor, EJ200, "Sensor");
     
     physSensor = new G4PVPlacement(0,G4ThreeVector(0,0,15*cm),logicSensor,"Sensor",logicWorld,false,1);
     matSensor.rotateX(-135 * deg);
@@ -83,7 +280,9 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     matSensor.rotateX(135 * deg);
     matSensor.rotateX(135 * deg);
     physSensor = new G4PVPlacement(G4Transform3D( matSensor,G4ThreeVector(0,-15*cm,-15*cm)),logicSensor,"Sensor",logicWorld,false,3);
+    */
     
+    /*
     // source
     const G4double sourceThickness = 5.0 * mm;
     G4Tubs* env22NaCase = new G4Tubs( "env22NaCase", 0, 25.0/2.0 * mm, 5.0 / 2.0 * mm, 0, CLHEP::twopi);
@@ -98,7 +297,8 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     new G4Material("Scintillator", 1.032*g/cm3, 2);
     Sci->AddElement(C, 9);
     Sci->AddElement(H, 10);
-    
+    */
+    /*
     G4Material* Vacuum =
     new G4Material("Galactic", 1., 1.01*g/mole, universe_mean_density,
                    kStateGas, 2.73*kelvin, 3.e-18*pascal);
@@ -143,7 +343,8 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
                       false,
                       9004,
                       true);
-    
+    */
+    /*
     //Gel
     const G4double radiusSilicagel = 4.0 * mm;
     const G4double depthSilicagel = 15.0 * mm;
@@ -164,7 +365,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
                       false,                //set to false
                       3001,            //copy number
                       true);            // check
-
+    */
 
 
     
@@ -241,6 +442,8 @@ void mcDetectorConstruction::DefineMaterials()
     //G4Element* Mn = new G4Element( "Manganese", "Mn", 25., 54.93*g/mole);
     G4Element* Cr = new G4Element( "Chromium", "Cr", 24., 51.996*g/mole);
     G4Element* I = new G4Element( "Iodine", "I", 53., 126.9*g/mole);
+    G4Element* Gd = new G4Element("Gadolinium", "Gd", z=64, a=157.25    *g/mole); // [yy]
+    G4Element* Ga = new G4Element("Gallium"   , "Ga", z=31, a= 69.723   *g/mole); // [yy]
     
     //
     // define an Element from isotopes, by relative abundance
@@ -286,11 +489,6 @@ void mcDetectorConstruction::DefineMaterials()
     SiO2->AddElement(O , natoms=2);
     
     // define a material from elements.   case 2: mixture by fractional mass
-    
-    G4Material* Air =
-    new G4Material("Air"  , density= 1.290*mg/cm3, ncomponents=2);
-    Air->AddElement(N, fractionmass=0.7);
-    Air->AddElement(O, fractionmass=0.3);
     
     G4Material* RockKam =
     new G4Material("RockKam", density= 3.0*g/cm3, ncomponents=13);
@@ -380,21 +578,45 @@ void mcDetectorConstruction::DefineMaterials()
     steam->AddMaterial(H2O, fractionmass=1.);
     
     // examples of vacuum
-    
     G4Material* Vacuum =
     new G4Material("Galactic", z=1., a=1.01*g/mole,density= universe_mean_density,
                    kStateGas, 2.73*kelvin, 3.e-18*pascal);
-    
+                   
+    /*
     G4Material* beam =
     new G4Material("Beam", density= 1.e-5*g/cm3, ncomponents=1,
                    kStateGas, STP_Temperature, 2.e-2*bar);
     beam->AddMaterial(Air, fractionmass=1.);
+    */
+    
+    // GAGG scintillator [yy]
+    G4Material* GAGG = new G4Material("GAGG", density=6.63*g/cm3, 4);
+    GAGG -> AddElement(Gd,  3);
+    GAGG -> AddElement(Al,  2);
+    GAGG -> AddElement(Ga,  3);
+    GAGG -> AddElement(O , 12);
+    
+    // Getting the NIST Material Manager [yy]
+	nistMan = G4NistManager::Instance();
+	nistMan->SetVerbose(0);
+	
+	// Air
+	 Air = nistMan->FindOrBuildMaterial("G4_AIR"); // [yy]
+	/*
+    Air = new G4Material("Air"  , density= 1.290*mg/cm3, ncomponents=2);
+    Air->AddElement(N, fractionmass=0.7);
+    Air->AddElement(O, fractionmass=0.3);
+	*/
+	
+	// Eljen EJ200 [yy]
+	EJ200 = nistMan->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
     
     G4cout << *(G4Material::GetMaterialTable()) << G4endl;
     
     
     //default materials of the World
-    defaultMaterial  = Vacuum;
+    //defaultMaterial  = Vacuum;
+    //defaultMaterial  = Air;
 }
 
 ///////////////////////////////////////////////////////

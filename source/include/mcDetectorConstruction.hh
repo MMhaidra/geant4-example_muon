@@ -4,6 +4,7 @@
 #include "mcAnalyzer.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
+#include "G4NistManager.hh" // [yy]
 
 class G4Box;
 class G4Orb;
@@ -43,7 +44,7 @@ public:
     
     G4double    GetFieldValue()      const {return fieldValue;};
     
-    const G4VPhysicalVolume* GetphysiWorld() const {return physWorld;};
+    //const G4VPhysicalVolume* GetphysiWorld() const {return physWorld;};
     const G4VPhysicalVolume* GetSensor()     const {return physSensor;};
     
     void SetAnalyzer(mcAnalyzer*);
@@ -56,11 +57,13 @@ private:
     
     G4double           WorldRadius;
     
-    G4Orb*             solidWorld;
-    G4LogicalVolume*   logicWorld;
-    G4VPhysicalVolume* physWorld;
+    //G4Orb*             solidWorld; // [yy]
+    //G4Box*             solidWorld; // [yy]
+    //G4LogicalVolume*   logicWorld;
+    //G4VPhysicalVolume* physWorld;
     
-    G4Tubs*            solidSensor;
+    //G4Tubs*            solidSensor;
+    G4Box*            solidSensor;
     G4LogicalVolume*   logicSensor;
     G4VPhysicalVolume* physSensor;
     
@@ -70,6 +73,10 @@ private:
     G4UserLimits*      pUserLimits;    //pointer to the UserLimits
     G4double            maxStep;          // max step length
     mcDetectorMessenger* detectorMessenger;  //pointer to the Messenger
+
+    G4NistManager* nistMan; // [yy]
+    G4Material* EJ200;  // [yy]   EJ200 (PVT Scintillator)
+    G4Material* Air;  // [yy]
     
     void DefineMaterials();
     mcAnalyzer* analyzer;

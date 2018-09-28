@@ -25,7 +25,7 @@ mcSensorSD::mcSensorSD(G4String name)
     collectionName.insert("sensorCollection");
   
     eThreshold = 10.0 * eV;
-    tResolution= 300.0 * ns;
+    //tResolution= 300.0 * ns; //[yy]
     
 }
 
@@ -75,12 +75,13 @@ G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     for (G4int iHit=0; (iHit<NbHits) && (!found) ;iHit++) {
         found = (copyNO == (*sensorCollection)[iHit]->GetCopyNO() ) ;
         if (found) {
+            
             // check time
-            if (std::abs(time-(*sensorCollection)[iHit]->GetTime()) < tResolution) {
+            //if (std::abs(time-(*sensorCollection)[iHit]->GetTime()) < tResolution) { //[yy]
                 // merge hit
                 (*sensorCollection)[iHit]->AddEdep(eLoss);
                 return true;
-            }
+            //} // [yy]
         }
     }
     
