@@ -24,10 +24,10 @@
 #/gun/usr/particle 8
 
 /gun/particle mu-
-/gun/energy 20. MeV
+/gun/energy 100. MeV
 
 /run/initialize
 
 /tracking/verbose 2
-/run/beamOn 10
+/run/beamOn 100000
 
