@@ -28,7 +28,7 @@ public:
     
     void SetSensorMaterial (G4String);
     void SetMaxStep(G4double);
-    void SetMagField(G4double);
+    //void SetMagField(G4double);
     
     G4VPhysicalVolume* Construct();
     
@@ -42,7 +42,7 @@ public:
     
     G4double    GetMaxStep()      const {return maxStep;};
     
-    G4double    GetFieldValue()      const {return fieldValue;};
+    //G4double    GetFieldValue()      const {return fieldValue;};
     
     //const G4VPhysicalVolume* GetphysiWorld() const {return physWorld;};
     const G4VPhysicalVolume* GetSensor()     const {return physSensor;};
@@ -67,8 +67,8 @@ private:
     G4LogicalVolume*   logicSensor;
     G4VPhysicalVolume* physSensor;
     
-    G4UniformMagField* magField;      //pointer to the magnetic field
-    G4double           fieldValue;
+    //G4UniformMagField* magField;      //pointer to the magnetic field
+    //G4double           fieldValue;
     
     G4UserLimits*      pUserLimits;    //pointer to the UserLimits
     G4double            maxStep;          // max step length

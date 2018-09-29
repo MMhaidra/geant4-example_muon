@@ -21,14 +21,14 @@ mcDetectorMessenger::mcDetectorMessenger(mcDetectorConstruction* mcDet)
     MaterialCmd->SetGuidance("Select Material of the sensor");
     MaterialCmd->SetParameterName("choice",false);
     MaterialCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-    
+    /*
     MagFieldCmd = new G4UIcmdWithADoubleAndUnit("/usr/det/setField",this);
     MagFieldCmd->SetGuidance("Define magnetic field.");
     MagFieldCmd->SetGuidance("Magnetic field will be in Z direction.");
     MagFieldCmd->SetParameterName("Bz",false);
     MagFieldCmd->SetUnitCategory("Magnetic flux density");
     MagFieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);  
-    
+    */
     MaxStepCmd = new G4UIcmdWithADoubleAndUnit("/usr/det/setMaxStep",this);
     MaxStepCmd->SetGuidance("Set MaxStep ");
     MaxStepCmd->SetParameterName("MaxStep",false);
@@ -42,7 +42,7 @@ mcDetectorMessenger::mcDetectorMessenger(mcDetectorConstruction* mcDet)
 mcDetectorMessenger::~mcDetectorMessenger()
 {
     delete MaterialCmd;
-    delete MagFieldCmd;
+    //delete MagFieldCmd;
     delete MaxStepCmd;  
     delete usrDir;
     
@@ -57,8 +57,8 @@ void mcDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     } else if( command == MaxStepCmd ){
         mcDetector->SetMaxStep(MaxStepCmd->GetNewDoubleValue(newValue));
         
-    } else if( command == MagFieldCmd ){
-        mcDetector->SetMagField(MagFieldCmd->GetNewDoubleValue(newValue));
+    //} else if( command == MagFieldCmd ){
+    //    mcDetector->SetMagField(MagFieldCmd->GetNewDoubleValue(newValue));
     }
 }
 
@@ -72,8 +72,8 @@ G4String mcDetectorMessenger::GetCurrentValue(G4UIcommand * command)
     } else if( command==MaxStepCmd ){
         cv =  MaxStepCmd->ConvertToString( mcDetector->GetMaxStep(),"mm");
         
-    } else if( command==MagFieldCmd ){
-        cv =  MagFieldCmd->ConvertToString( mcDetector->GetFieldValue(),"tesla");
+    //} else if( command==MagFieldCmd ){
+    //    cv =  MagFieldCmd->ConvertToString( mcDetector->GetFieldValue(),"tesla");
         
     }
     

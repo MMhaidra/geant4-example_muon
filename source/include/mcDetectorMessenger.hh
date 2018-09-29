@@ -28,7 +28,7 @@ private:
     G4UIdirectory*             detDir;
     G4UIcmdWithAString*        MaterialCmd;
     G4UIcmdWithADoubleAndUnit* MaxStepCmd;
-    G4UIcmdWithADoubleAndUnit* MagFieldCmd;
+    //G4UIcmdWithADoubleAndUnit* MagFieldCmd; //[yy]
     
 };
 
