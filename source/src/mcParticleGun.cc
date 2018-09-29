@@ -1,6 +1,5 @@
 #include "mcParticleGun.hh"
 #include "mcParticleGunMessenger.hh"
-//#include "mcDetectorMessenger.hh"
 #include "mcDetectorConstruction.hh"
 
 #include "G4Event.hh"
