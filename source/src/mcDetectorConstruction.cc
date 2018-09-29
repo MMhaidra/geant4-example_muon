@@ -1,5 +1,5 @@
 #include "mcDetectorConstruction.hh"
-#include "mcDetectorMessenger.hh"
+//#include "mcDetectorMessenger.hh"
 #include "mcSensorSD.hh"
 #include "mcAnalyzer.hh"
 
@@ -21,17 +21,17 @@
 #include "G4Colour.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
-
+#include "G4RunManager.hh"
 #include "G4NistManager.hh" // [yy] for use of G4materials
 
 #include <iostream>
 
 mcDetectorConstruction::mcDetectorConstruction()
 ://defaultMaterial(0),sensorMaterial(0),
-WorldRadius(100*cm),
+//WorldRadius(100*cm),
 //solidWorld(0),logicWorld(0),physWorld(0),
-solidSensor(0),logicSensor(0),physSensor(0),//magField(0),
-pUserLimits(0),maxStep(100.0*cm)
+solidSensor(0),logicSensor(0),physSensor(0)//,//magField(0),
+//pUserLimits(0),maxStep(100.0*cm)
 {
     
     // default parameter values of Sensor
@@ -46,7 +46,7 @@ pUserLimits(0),maxStep(100.0*cm)
 
 mcDetectorConstruction::~mcDetectorConstruction()
 { 
-    delete detectorMessenger;
+    //delete detectorMessenger;
 }
 
 //------------------------------------------------------------------------//
@@ -73,7 +73,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
   G4double world_sizeX = 100*cm; 
   G4double world_sizeY = 100*cm; 
   G4double world_sizeZ = 100*cm;
-  WorldRadius = world_sizeX;
+  //WorldRadius = world_sizeX;
 
   // scabox
   G4double scabox_sizeX =     30.0  *mm;  // > scavoxel_sizeX
@@ -380,14 +380,13 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
         SDman->AddNewDetector( aSensorSD );
     }
     aSensorSD->SetAnalyzer(analyzer);
-    
     logicSensor->SetSensitiveDetector(aSensorSD);
     
-    // Set UserLimits
-    G4double maxTrkLen = 10.0*WorldRadius;
-    G4double maxTime   = 1000.0 * ns;
-    pUserLimits = new G4UserLimits(maxStep, maxTrkLen, maxTime);
-    logicWorld->SetUserLimits(pUserLimits);
+    // Set UserLimits // [yy] comment 
+    //G4double maxTrkLen = 10.0*WorldRadius;
+    //G4double maxTime   = 1000.0 * ns;
+    //pUserLimits = new G4UserLimits(maxStep, maxTrkLen, maxTime);
+    //logicWorld->SetUserLimits(pUserLimits);
     
     // Visualization attributes
     logicWorld->SetVisAttributes (G4VisAttributes::Invisible);
@@ -403,26 +402,24 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
 
 
 ///////////////////////////////////////////////////////
-void mcDetectorConstruction::DefineMaterials()
-{ 
+void mcDetectorConstruction::DefineMaterials(){ 
     //This function illustrates the possible ways to define materials
     
-    G4String symbol, name;
-    G4double a, z, density, temperature, pressure;
-    // No use temperature & pressure in Geant4
-    G4int iz, n, in;
+    // Getting the NIST Material Manager [yy]
+	nistMan = G4NistManager::Instance();
+	nistMan->SetVerbose(0);
     
-    G4int ncomponents, natoms;
+    // Define parameters
+    G4String symbol, name;
+    G4double a; // mass of a mole
+    G4double z; // mean number of protons
+    G4double density;
+    G4int iz; // number of protons in an isotope
+    G4int n; // number of nucleons in an isotope
+    G4int in, ncomponents, natoms;
     G4double abundance, fractionmass;
     
-    // a =mass of a mole;
-    // z =mean number of protons;
-    // iz=number of protons in an isotope;
-    // n =number of nucleons in an isotope;
-    
-    //
-    // define Elements
-    //
+    // Define Elements
     G4Element* H  = new G4Element("Hydrogen",symbol="H" , z= 1., a= 1.01*g/mole);
     G4Element* B  = new G4Element("Boron",symbol="B" , z= 5., a= 10.81*g/mole);
     G4Element* C  = new G4Element("Carbon"  ,symbol="C" , z= 6., a= 12.01*g/mole);
@@ -439,187 +436,33 @@ void mcDetectorConstruction::DefineMaterials()
     G4Element* Mn = new G4Element("Manganese",symbol="Mn" , z= 25., a= 54.94*g/mole);
     G4Element* Fe = new G4Element("Iron",symbol="Fe" , z= 26., a= 55.85*g/mole);
     G4Element* Ni = new G4Element( "Nickel", "Ni", 28., 58.69*g/mole);
-    //G4Element* Mn = new G4Element( "Manganese", "Mn", 25., 54.93*g/mole);
     G4Element* Cr = new G4Element( "Chromium", "Cr", 24., 51.996*g/mole);
     G4Element* I = new G4Element( "Iodine", "I", 53., 126.9*g/mole);
     G4Element* Gd = new G4Element("Gadolinium", "Gd", z=64, a=157.25    *g/mole); // [yy]
     G4Element* Ga = new G4Element("Gallium"   , "Ga", z=31, a= 69.723   *g/mole); // [yy]
     
-    //
-    // define an Element from isotopes, by relative abundance
-    //
+    // Define materials
+
+	// Air // [yy]
+	 Air = nistMan->FindOrBuildMaterial("G4_AIR"); 
+	
+	// EJ200(Eljen) [yy]
+	EJ200 = nistMan->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
     
-    
-    G4Isotope* U5 = new G4Isotope("U235", iz=92, n=235, a=235.01*g/mole);
-    G4Isotope* U8 = new G4Isotope("U238", iz=92, n=238, a=238.03*g/mole);
-    
-    G4Element* U  = new G4Element("enriched Uranium",symbol="U",ncomponents=2);
-    U->AddIsotope(U5, abundance= 90.*perCent);
-    U->AddIsotope(U8, abundance= 10.*perCent);
-    
-    // define simple materials
-    
-    new G4Material("liquidArgon", z=18., a= 39.95*g/mole, density= 1.390*g/cm3);
-    new G4Material("Lead"     , z=82., a= 207.19*g/mole, density= 11.35*g/cm3);
-    new G4Material("Tungsten" , z=74., a= 183.84*g/mole, density= 19.25*g/cm3);
-    
-    // define a material from elements.   case 1: chemical molecule
-    
-    G4Material* H2O =
-    new G4Material("Water", density= 1.000*g/cm3, ncomponents=2);
-    H2O->AddElement(H, natoms=2);
-    H2O->AddElement(O, natoms=1);
-    // overwrite computed meanExcitationEnergy with ICRU recommended value
-    H2O->GetIonisation()->SetMeanExcitationEnergy(75.0*eV);
-    
-    G4Material* Sci =
-    new G4Material("Scintillator", density= 1.032*g/cm3, ncomponents=2);
-    Sci->AddElement(C, natoms=9);
-    Sci->AddElement(H, natoms=10);
-    
-    G4Material* Myl =
-    new G4Material("Mylar", density= 1.397*g/cm3, ncomponents=3);
-    Myl->AddElement(C, natoms=10);
-    Myl->AddElement(H, natoms= 8);
-    Myl->AddElement(O, natoms= 4);
-    
-    G4Material* SiO2 =
-    new G4Material("quartz",density= 2.200*g/cm3, ncomponents=2);
-    SiO2->AddElement(Si, natoms=1);
-    SiO2->AddElement(O , natoms=2);
-    
-    // define a material from elements.   case 2: mixture by fractional mass
-    
-    G4Material* RockKam =
-    new G4Material("RockKam", density= 3.0*g/cm3, ncomponents=13);
-    RockKam->AddElement(H, fractionmass=0.006);
-    RockKam->AddElement(C, fractionmass=0.003);
-    RockKam->AddElement(O, fractionmass=0.607);
-    RockKam->AddElement(Na, fractionmass=0.039);
-    RockKam->AddElement(Mg, fractionmass=0.003);
-    RockKam->AddElement(Al, fractionmass=0.106);
-    RockKam->AddElement(Si, fractionmass=0.185);
-    RockKam->AddElement(P, fractionmass=0.001);
-    RockKam->AddElement(K, fractionmass=0.021);
-    RockKam->AddElement(Ca, fractionmass=0.018);
-    RockKam->AddElement(Ti, fractionmass=0.001);
-    RockKam->AddElement(Mn, fractionmass=0.000);
-    RockKam->AddElement(Fe, fractionmass=0.010);
-    
-    //define for detector
-    // stailess SUS304
-    
-    G4Material* sus304 = new G4Material(name="Sus304", density=8.03*g/cm3, ncomponents=5);
-    sus304->AddElement(Ni, 0.09);
-    sus304->AddElement(C, 0.005);
-    sus304->AddElement(Mn, 0.01);
-    sus304->AddElement(Cr, 0.18);
-    sus304->AddElement(Fe, 0.715);
-    G4Material* polyethylene=new G4Material(name="polyethylene",density=0.92*g/cm3,ncomponents=2);
-    polyethylene->AddElement(C,1);
-    polyethylene->AddElement(H,2);
-    G4Isotope* he3 = new G4Isotope(name="he3", iz=2, in=3, a=3.0160293191*g/mole);
-    G4Element* He3 = new G4Element(name="He3", symbol="He3", ncomponents=1);
-    He3->AddIsotope(he3, abundance=100.*perCent);
-    G4Material* Herium3 = new G4Material(name="Herium3",density=1.34644166*mg/cm3,ncomponents=1,kStateGas,temperature=300.15*kelvin,pressure=10.*atmosphere);
-    Herium3->AddElement(He3, 1);
-    
-    
-    //the follow definition from CANDLES MC
-    // Sillion rubber + B4C 40%
-    // http://www.askcorp.co.jp/sanshin/work/engineering/pdf/material.pdf
-    const G4double R_B4C  = 40;    // target value, wt-%
-    const G4double R0_B4C = 20;    // original value, wt-%
-    const G4double W0_H   = 0.065; // fraction Mass
-    const G4double W0_O   = 0.173;
-    const G4double W0_Si  = 0.303;
-    const G4double W0_B   = 0.157;
-    const G4double W0_C   = 0.302;
-    
-    G4double totalMass = R_B4C / R0_B4C * (W0_B + W0_C) + (100.0 - R_B4C) / (100.0 - R0_B4C) * (W0_H + W0_O + W0_Si);
-    G4double W_H       = (100.0 - R_B4C) / (100.0 - R0_B4C) * W0_H  / totalMass;
-    G4double W_O       = (100.0 - R_B4C) / (100.0 - R0_B4C) * W0_O  / totalMass;
-    G4double W_Si      = (100.0 - R_B4C) / (100.0 - R0_B4C) * W0_Si / totalMass;
-    G4double W_B       = R_B4C / R0_B4C * W0_B / totalMass;
-    G4double W_C       = R_B4C / R0_B4C * W0_C / totalMass;
-    
-    // ref. density (2015/7/30 from T.Iida)
-    G4Material* RubberB4C = new G4Material("RubberB4C", density = 1.42 *g/cm3, ncomponents = 5);
-    RubberB4C -> AddElement(H,  fractionmass = W_H);
-    RubberB4C -> AddElement(O,  fractionmass = W_O);
-    RubberB4C -> AddElement(Si, fractionmass = W_Si);
-    RubberB4C -> AddElement(B,  fractionmass = W_B);
-    RubberB4C -> AddElement(C,  fractionmass = W_C);
-    
-    //define a material from elements and/or others materials (mixture of mixtures)
-    
-    G4Material* Aerog =
-    new G4Material("Aerogel", density= 0.200*g/cm3, ncomponents=3);
-    Aerog->AddMaterial(SiO2, fractionmass=62.5*perCent);
-    Aerog->AddMaterial(H2O , fractionmass=37.4*perCent);
-    Aerog->AddElement (C   , fractionmass= 0.1*perCent);
-    
-    // examples of gas in non STP conditions
-    
-    G4Material* CO2 =
-    new G4Material("CarbonicGas", density= 27.*mg/cm3, ncomponents=2,
-                   kStateGas, 325.*kelvin, 2.*atmosphere);
-    CO2->AddElement(C, natoms=1);
-    CO2->AddElement(O, natoms=2);
-    
-    G4Material* NaI =
-    new G4Material("NaI", density= 3.67*g/cm3, ncomponents=2);
-    NaI->AddElement(Na, natoms=1);
-    NaI->AddElement(I, natoms=1);
-    
-    G4Material* steam =
-    new G4Material("WaterSteam", density= 0.3*mg/cm3, ncomponents=1,
-                   kStateGas, 500.*kelvin, 2.*atmosphere);
-    steam->AddMaterial(H2O, fractionmass=1.);
-    
-    // examples of vacuum
-    G4Material* Vacuum =
-    new G4Material("Galactic", z=1., a=1.01*g/mole,density= universe_mean_density,
-                   kStateGas, 2.73*kelvin, 3.e-18*pascal);
-                   
-    /*
-    G4Material* beam =
-    new G4Material("Beam", density= 1.e-5*g/cm3, ncomponents=1,
-                   kStateGas, STP_Temperature, 2.e-2*bar);
-    beam->AddMaterial(Air, fractionmass=1.);
-    */
-    
-    // GAGG scintillator [yy]
-    G4Material* GAGG = new G4Material("GAGG", density=6.63*g/cm3, 4);
+    // GAGG scintillator [yy] (not used now)
+    GAGG = new G4Material("GAGG", density=6.63*g/cm3, 4);
     GAGG -> AddElement(Gd,  3);
     GAGG -> AddElement(Al,  2);
     GAGG -> AddElement(Ga,  3);
     GAGG -> AddElement(O , 12);
     
-    // Getting the NIST Material Manager [yy]
-	nistMan = G4NistManager::Instance();
-	nistMan->SetVerbose(0);
-	
-	// Air
-	 Air = nistMan->FindOrBuildMaterial("G4_AIR"); // [yy]
-	/*
-    Air = new G4Material("Air"  , density= 1.290*mg/cm3, ncomponents=2);
-    Air->AddElement(N, fractionmass=0.7);
-    Air->AddElement(O, fractionmass=0.3);
-	*/
-	
-	// Eljen EJ200 [yy]
-	EJ200 = nistMan->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
     
     G4cout << *(G4Material::GetMaterialTable()) << G4endl;
-    
-    
-    //default materials of the World
-    //defaultMaterial  = Vacuum;
-    //defaultMaterial  = Air;
+
 }
 
 ///////////////////////////////////////////////////////
+/*
 void mcDetectorConstruction::SetMaxStep(G4double value)
 {
     //--------- example of User Limits -------------------------------
@@ -636,8 +479,9 @@ void mcDetectorConstruction::SetMaxStep(G4double value)
     }
     UpdateGeometry();
 }
+*/
 /////////////////////////////////////////////////////////////
-
+/*
 void mcDetectorConstruction::SetSensorMaterial(G4String materialChoice)
 {
     // search the material by its name
@@ -653,31 +497,10 @@ void mcDetectorConstruction::SetSensorMaterial(G4String materialChoice)
         G4cout <<G4endl;
     }
 }
-
-
-#include "G4FieldManager.hh"
-#include "G4TransportationManager.hh"
-/*
-void mcDetectorConstruction::SetMagField(G4double value)
-{
-    //apply a global uniform magnetic field along Y axis
-    G4FieldManager* fieldMgr
-    = G4TransportationManager::GetTransportationManager()->GetFieldManager();
-    
-    if(magField) delete magField;		//delete the existing magn field
-    
-    if(value!=0.){			// create a new one if non nul
-        fieldValue = value;
-        magField = new G4UniformMagField(G4ThreeVector(0.,fieldValue,0.));
-        fieldMgr->SetDetectorField(magField);
-        fieldMgr->CreateChordFinder(magField);
-    } else {
-        magField = 0;
-        fieldMgr->SetDetectorField(magField);
-    }
-}
 */
-#include "G4RunManager.hh"
+
+
+
 
 void mcDetectorConstruction::UpdateGeometry()
 {

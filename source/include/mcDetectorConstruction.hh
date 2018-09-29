@@ -12,9 +12,9 @@ class G4Tubs;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4Material;
-class G4UniformMagField;
-class G4UserLimits;
-class mcDetectorMessenger;
+//class G4UniformMagField;
+//class G4UserLimits;
+//class mcDetectorMessenger;
 
 
 class mcDetectorConstruction : public G4VUserDetectorConstruction
@@ -26,8 +26,8 @@ public:
     
 public:
     
-    void SetSensorMaterial (G4String);
-    void SetMaxStep(G4double);
+    //void SetSensorMaterial (G4String);
+    //void SetMaxStep(G4double);
     //void SetMagField(G4double);
     
     G4VPhysicalVolume* Construct();
@@ -36,11 +36,11 @@ public:
     
 public:
     
-    G4double GetWorldRadius()  const    {return WorldRadius;};
+    //G4double GetWorldRadius()  const    {return WorldRadius;};
     
-    const G4Material* GetSensorMaterial()  const {return sensorMaterial;};
+    //const G4Material* GetSensorMaterial()  const {return sensorMaterial;};
     
-    G4double    GetMaxStep()      const {return maxStep;};
+    //G4double    GetMaxStep()      const {return maxStep;};
     
     //G4double    GetFieldValue()      const {return fieldValue;};
     
@@ -52,10 +52,10 @@ public:
     
     
 private:
-    G4Material*        defaultMaterial;
-    G4Material*        sensorMaterial;
+    //G4Material*        defaultMaterial;
+    //G4Material*        sensorMaterial;
     
-    G4double           WorldRadius;
+    //G4double           WorldRadius;
     
     //G4Orb*             solidWorld; // [yy]
     //G4Box*             solidWorld; // [yy]
@@ -63,20 +63,21 @@ private:
     //G4VPhysicalVolume* physWorld;
     
     //G4Tubs*            solidSensor;
-    G4Box*            solidSensor;
+    G4Box*             solidSensor;
     G4LogicalVolume*   logicSensor;
     G4VPhysicalVolume* physSensor;
     
     //G4UniformMagField* magField;      //pointer to the magnetic field
     //G4double           fieldValue;
     
-    G4UserLimits*      pUserLimits;    //pointer to the UserLimits
-    G4double            maxStep;          // max step length
-    mcDetectorMessenger* detectorMessenger;  //pointer to the Messenger
+    //G4UserLimits*      pUserLimits;    //pointer to the UserLimits
+    //G4double            maxStep;          // max step length
+    //mcDetectorMessenger* detectorMessenger;  //pointer to the Messenger
 
     G4NistManager* nistMan; // [yy]
-    G4Material* EJ200;  // [yy]   EJ200 (PVT Scintillator)
-    G4Material* Air;  // [yy]
+    G4Material* EJ200;  // [yy]   Eljen EJ200 (assumed as PVT Scintillator)
+    G4Material* Air;    // [yy]
+    G4Material* GAGG;   // [yy]
     
     void DefineMaterials();
     mcAnalyzer* analyzer;
