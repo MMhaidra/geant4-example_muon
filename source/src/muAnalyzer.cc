@@ -1,11 +1,11 @@
 //
-//  mcAnalyzer.cc
+//  muAnalyzer.cc
 //  mc
 //
 //  Created by Mizukoshi Keita on 2018/07/28.
 //
 
-#include "mcAnalyzer.hh"
+#include "muAnalyzer.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4Types.hh"
@@ -14,21 +14,21 @@
 #include "TTree.h"
 #include "TFile.h"
 
-mcAnalyzer::mcAnalyzer()
+muAnalyzer::muAnalyzer()
 {
 }
 
-mcAnalyzer::~mcAnalyzer(){
+muAnalyzer::~muAnalyzer(){
 }
-mcAnalyzer::mcAnalyzer(const mcAnalyzer &obj) {
+muAnalyzer::muAnalyzer(const muAnalyzer &obj) {
     tree = obj.tree;
 }
 
-void mcAnalyzer::SetInit(G4bool isRootIn, TString filenameIn){
+void muAnalyzer::SetInit(G4bool isRootIn, TString filenameIn){
     isRoot = isRootIn;
     filename = filenameIn;
 }
-void mcAnalyzer::Init(){
+void muAnalyzer::Init(){
     
     if(isRoot == true){
         tree = new TTree("tree","mc output");
@@ -50,7 +50,7 @@ void mcAnalyzer::Init(){
     }
 }
 
-void mcAnalyzer::Fill(int buf1,                     //nHit
+void muAnalyzer::Fill(int buf1,                     //nHit
                       std::vector<G4double> buf2,   //x
                       std::vector<G4double> buf3,   //y
                       std::vector<G4double> buf4,   //z
@@ -102,7 +102,7 @@ void mcAnalyzer::Fill(int buf1,                     //nHit
     }
 }
 
-void mcAnalyzer::Terminate(){
+void muAnalyzer::Terminate(){
     if (isRoot == true){
         auto fout = new TFile(filename,"recreate");
         tree->Write();
@@ -114,6 +114,6 @@ void mcAnalyzer::Terminate(){
     
 }
 
-void mcAnalyzer::SetFileName(TString name){
+void muAnalyzer::SetFileName(TString name){
     filename = name;
 }

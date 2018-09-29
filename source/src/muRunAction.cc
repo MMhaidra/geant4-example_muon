@@ -1,19 +1,19 @@
-#include "mcRunAction.hh"
+#include "muRunAction.hh"
 
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 #include "G4UnitsTable.hh"
 
 
-mcRunAction::mcRunAction()
+muRunAction::muRunAction()
 {}
 
 
-mcRunAction::~mcRunAction()
+muRunAction::~muRunAction()
 {}
 
 
-void mcRunAction::BeginOfRunAction(const G4Run* aRun)
+void muRunAction::BeginOfRunAction(const G4Run* aRun)
 { 
     G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
     
@@ -23,7 +23,7 @@ void mcRunAction::BeginOfRunAction(const G4Run* aRun)
 }
 
 
-void mcRunAction::EndOfRunAction(const G4Run* aRun)
+void muRunAction::EndOfRunAction(const G4Run* aRun)
 {
     G4int NbOfEvents = aRun->GetNumberOfEvent();
     if (NbOfEvents == 0) return;

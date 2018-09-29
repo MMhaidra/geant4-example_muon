@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-project(mc)
+project(mu)
 
 #----------------------------------------------------------------------------
 #Setting ROOT
@@ -44,9 +44,9 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 add_definitions(${ROOT_CXX_FLAGS})
-add_executable(mc mc.cc ${sources} ${headers})
-target_link_libraries(mc ${Geant4_LIBRARIES})
-target_link_libraries(mc ${ROOT_LIBRARIES})
+add_executable(mu mu.cc ${sources} ${headers})
+target_link_libraries(mu ${Geant4_LIBRARIES})
+target_link_libraries(mu ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 #Compiler option
@@ -58,11 +58,11 @@ set(CMAKE_INSTALL_PREFIX "..")
 # For internal Geant4 use - but has no effect if you build this
 # example standalone
 #
-add_custom_target(MC DEPENDS mc)
+add_custom_target(MU DEPENDS mu)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS mc DESTINATION bin)
+install(TARGETS mu DESTINATION bin)
 
 

@@ -1,7 +1,7 @@
 
-#include "mcEventAction.hh"
+#include "muEventAction.hh"
 
-#include "mcRunAction.hh"
+#include "muRunAction.hh"
 
 #include "G4Event.hh"
 #include "G4TrajectoryContainer.hh"
@@ -13,23 +13,23 @@
 #include <iomanip>
 
 
-mcEventAction::mcEventAction(mcRunAction* action)
+muEventAction::muEventAction(muRunAction* action)
 {
     runAction = action;
 }
 
 
-mcEventAction::~mcEventAction()
+muEventAction::~muEventAction()
 {
 }
 
 
-void mcEventAction::BeginOfEventAction(const G4Event*)
+void muEventAction::BeginOfEventAction(const G4Event*)
 {  
 }
 
 
-void mcEventAction::EndOfEventAction(const G4Event* evt)
+void muEventAction::EndOfEventAction(const G4Event* evt)
 {
     G4int evtNb = evt->GetEventID();   
     if (evtNb%1000  == 0) {

@@ -1,6 +1,6 @@
-#include "mcDetectorConstruction.hh"
-#include "mcSensorSD.hh"
-#include "mcAnalyzer.hh"
+#include "muDetectorConstruction.hh"
+#include "muSensorSD.hh"
+#include "muAnalyzer.hh"
 
 #include "G4Material.hh"
 #include "G4Box.hh"
@@ -25,21 +25,21 @@
 
 #include <iostream>
 
-mcDetectorConstruction::mcDetectorConstruction()
+muDetectorConstruction::muDetectorConstruction()
 :solidSensor(0),logicSensor(0),physSensor(0){
     
     DefineMaterials();
 
 }
 
-mcDetectorConstruction::~mcDetectorConstruction()
+muDetectorConstruction::~muDetectorConstruction()
 { 
 
 }
 
 //------------------------------------------------------------------------//
 // Begin of Construct()
-G4VPhysicalVolume* mcDetectorConstruction::Construct()
+G4VPhysicalVolume* muDetectorConstruction::Construct()
 {
     // Clean old geometry, if any
     G4GeometryManager::GetInstance()->OpenGeometry();
@@ -247,9 +247,9 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     //------------------------------------------------
     
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
-    mcSensorSD* aSensorSD = (mcSensorSD*)SDman->FindSensitiveDetector("mc/SensorSD");
+    muSensorSD* aSensorSD = (muSensorSD*)SDman->FindSensitiveDetector("mu/SensorSD");
     if ( aSensorSD == 0){
-        aSensorSD = new mcSensorSD("mc/SensorSD");
+        aSensorSD = new muSensorSD("mu/SensorSD");
         SDman->AddNewDetector( aSensorSD );
     }
     aSensorSD->SetAnalyzer(analyzer);
@@ -272,7 +272,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
 
 
 ///////////////////////////////////////////////////////
-void mcDetectorConstruction::DefineMaterials(){ 
+void muDetectorConstruction::DefineMaterials(){ 
     /*This function illustrates the possible ways to define materials*/
     
     // Getting the NIST Material Manager [yy]
@@ -309,12 +309,12 @@ void mcDetectorConstruction::DefineMaterials(){
 
 }
 
-void mcDetectorConstruction::UpdateGeometry()
+void muDetectorConstruction::UpdateGeometry()
 {
     G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
 }
 
-void mcDetectorConstruction::SetAnalyzer(mcAnalyzer * analyzer_in)
+void muDetectorConstruction::SetAnalyzer(muAnalyzer * analyzer_in)
 {
     analyzer = analyzer_in;
 }

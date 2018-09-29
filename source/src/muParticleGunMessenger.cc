@@ -1,5 +1,5 @@
-#include "mcParticleGun.hh"
-#include "mcParticleGunMessenger.hh"
+#include "muParticleGun.hh"
+#include "muParticleGunMessenger.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithADouble.hh"
@@ -8,18 +8,16 @@
 #include <iostream>
 
 
-mcParticleGunMessenger::mcParticleGunMessenger()
-:mcPG(0)
+muParticleGunMessenger::muParticleGunMessenger()
+:muPG(0)
 {
 }
 
-mcParticleGunMessenger::mcParticleGunMessenger(mcParticleGun* pg)
+muParticleGunMessenger::muParticleGunMessenger(muParticleGun* pg)
 :G4UImessenger(),
-mcPG(pg)
+muPG(pg)
 {
     
-    //gunDir = new G4UIdirectory("/gun/");
-    //gunDir->SetGuidance("UI commands for mc simulation");
     
     cmdDir = new G4UIdirectory("/gun/usr/");
     cmdDir->SetGuidance("UI commands for primary generator");
@@ -44,7 +42,7 @@ mcPG(pg)
     
 }
 
-mcParticleGunMessenger::~mcParticleGunMessenger()
+muParticleGunMessenger::~muParticleGunMessenger()
 {
     delete vtxCmd;
     delete parCmd;
@@ -53,28 +51,28 @@ mcParticleGunMessenger::~mcParticleGunMessenger()
     
 }
 
-void mcParticleGunMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
+void muParticleGunMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
     if (command == vtxCmd ){
-        mcPG->positionFlag = vtxCmd->GetNewIntValue(newValue);
+        muPG->positionFlag = vtxCmd->GetNewIntValue(newValue);
     }else if ( command == parCmd){
-        mcPG->particleFlag = parCmd->GetNewIntValue(newValue);
+        muPG->particleFlag = parCmd->GetNewIntValue(newValue);
     }else if ( command == eneCmd){
-        mcPG->monoEnergy = eneCmd->GetNewDoubleValue(newValue);
+        muPG->monoEnergy = eneCmd->GetNewDoubleValue(newValue);
     }
     
 }
 
-G4String mcParticleGunMessenger::GetCurrentValue(G4UIcommand* command)
+G4String muParticleGunMessenger::GetCurrentValue(G4UIcommand* command)
 {
     G4String cv;
     
     if (command == vtxCmd ){
-        cv = vtxCmd->ConvertToString(mcPG->positionFlag);
+        cv = vtxCmd->ConvertToString(muPG->positionFlag);
     }else if ( command == parCmd){
-        cv = parCmd->ConvertToString(mcPG->particleFlag);
+        cv = parCmd->ConvertToString(muPG->particleFlag);
     }else if ( command == eneCmd){
-        cv = eneCmd->ConvertToString(mcPG->monoEnergy, "cm");
+        cv = eneCmd->ConvertToString(muPG->monoEnergy, "cm");
     }
     
     return cv;

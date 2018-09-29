@@ -1,4 +1,4 @@
-#include "mcPhysicsList.hh"
+#include "muPhysicsList.hh"
 
 #include "G4ProcessManager.hh"
 #include "G4ParticleTypes.hh"
@@ -35,18 +35,18 @@
 #include "G4hBremsstrahlung.hh"
 #include "G4hPairProduction.hh"
 
-mcPhysicsList::mcPhysicsList():  G4VUserPhysicsList()
+muPhysicsList::muPhysicsList():  G4VUserPhysicsList()
 {
-    defaultCutValue = 1.0*mm;
+    defaultCutValue = 0.1*mm;
     SetVerboseLevel(1);
 }
 
 
-mcPhysicsList::~mcPhysicsList()
+muPhysicsList::~muPhysicsList()
 {}
 
 
-void mcPhysicsList::ConstructParticle()
+void muPhysicsList::ConstructParticle()
 {
     // In this method, static member functions should be called
     // for all particles which you want to use.
@@ -81,7 +81,7 @@ void mcPhysicsList::ConstructParticle()
 }
 
 
-void mcPhysicsList::ConstructBosons()
+void muPhysicsList::ConstructBosons()
 {
     // pseudo-particles
     G4Geantino::GeantinoDefinition();
@@ -96,7 +96,7 @@ void mcPhysicsList::ConstructBosons()
 }
 
 
-void mcPhysicsList::ConstructLeptons()
+void muPhysicsList::ConstructLeptons()
 {
     // leptons
     G4Electron::ElectronDefinition();
@@ -111,7 +111,7 @@ void mcPhysicsList::ConstructLeptons()
 }
 
 
-void mcPhysicsList::ConstructMesons()
+void muPhysicsList::ConstructMesons()
 {
     //  mesons
     G4PionPlus::PionPlusDefinition();
@@ -128,7 +128,7 @@ void mcPhysicsList::ConstructMesons()
 }
 
 
-void mcPhysicsList::ConstructBaryons()
+void muPhysicsList::ConstructBaryons()
 {
     //  barions
     G4Proton::ProtonDefinition();
@@ -139,7 +139,7 @@ void mcPhysicsList::ConstructBaryons()
 
 
 
-void mcPhysicsList::ConstructProcess()
+void muPhysicsList::ConstructProcess()
 {
     AddTransportation();
     ConstructEM();
@@ -173,7 +173,7 @@ void mcPhysicsList::ConstructProcess()
 //#include "G4UserSpecialCuts.hh"
 #include "G4StepLimiter.hh"
 
-void mcPhysicsList::ConstructEM()
+void muPhysicsList::ConstructEM()
 {
     auto *theParticleIterator = GetParticleIterator();
     theParticleIterator->reset();
@@ -222,7 +222,7 @@ void mcPhysicsList::ConstructEM()
 
 #include "G4Decay.hh"
 
-void mcPhysicsList::ConstructGeneral()
+void muPhysicsList::ConstructGeneral()
 {
     // Add Decay Process
     G4Decay* theDecayProcess = new G4Decay();
@@ -249,7 +249,7 @@ void mcPhysicsList::ConstructGeneral()
 
 #include "G4Cerenkov.hh"
 
-void mcPhysicsList::ConstructOp()
+void muPhysicsList::ConstructOp()
 {
     G4Cerenkov* theCerenkovProcess = new G4Cerenkov("Cerenkov");
     theCerenkovProcess->SetMaxNumPhotonsPerStep(300);
@@ -269,7 +269,7 @@ void mcPhysicsList::ConstructOp()
 }
 
 // http://geant4.lngs.infn.it/corso_infn/doxygen/task3/task3b/index.html
- void mcPhysicsList::ConstructDecay()
+ void muPhysicsList::ConstructDecay()
 {
   G4Decay* theDecayProcess = new G4DecayWithSpin();
 
@@ -287,10 +287,10 @@ void mcPhysicsList::ConstructOp()
   muMinusManager->SetProcessOrdering(theDecayProcess, idxAtRest);
  }
 
-void mcPhysicsList::SetCuts()
+void muPhysicsList::SetCuts()
 {
     if (verboseLevel >0){
-        G4cout << "mcPhysicsList::SetCuts:";
+        G4cout << "muPhysicsList::SetCuts:";
         G4cout << "CutLength : " << G4BestUnit(defaultCutValue,"Length") << G4endl;
     }
     

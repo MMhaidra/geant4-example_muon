@@ -1,5 +1,4 @@
-
-#include "mcSensorHit.hh"
+#include "muSensorHit.hh"
 #include "G4UnitsTable.hh"
 #include "G4VVisManager.hh"
 #include "G4Circle.hh"
@@ -8,10 +7,10 @@
 
 #include "G4SystemOfUnits.hh"
 
-G4Allocator<mcSensorHit> mcSensorHitAllocator;
+G4Allocator<muSensorHit> muSensorHitAllocator;
 
 
-mcSensorHit::mcSensorHit():
+muSensorHit::muSensorHit():
 copyNO(-1),
 trackID(0),
 codePDG(0),
@@ -23,12 +22,12 @@ eIn(0.0)
 {}
 
 
-mcSensorHit::~mcSensorHit() 
+muSensorHit::~muSensorHit() 
 {}
 
 
 
-mcSensorHit::mcSensorHit(const mcSensorHit& right)
+muSensorHit::muSensorHit(const muSensorHit& right)
 : G4VHit()
 {
     copyNO      = right.copyNO;
@@ -44,7 +43,7 @@ mcSensorHit::mcSensorHit(const mcSensorHit& right)
 }
 
 
-const mcSensorHit& mcSensorHit::operator=(const mcSensorHit& right)
+const muSensorHit& muSensorHit::operator=(const muSensorHit& right)
 {
     if (this != &right) {
         copyNO      = right.copyNO;
@@ -63,13 +62,13 @@ const mcSensorHit& mcSensorHit::operator=(const mcSensorHit& right)
 
 
 
-G4int mcSensorHit::operator==(const mcSensorHit& right) const
+G4int muSensorHit::operator==(const muSensorHit& right) const
 {
     return (this==&right) ? 1 : 0;
 }
 
 
-void mcSensorHit::Set(int copy, const G4Track* track,G4double eLoss, G4double valEIn)
+void muSensorHit::Set(int copy, const G4Track* track,G4double eLoss, G4double valEIn)
 {
     copyNO   =  copy;
     eDep		= eLoss;
@@ -85,7 +84,7 @@ void mcSensorHit::Set(int copy, const G4Track* track,G4double eLoss, G4double va
     }
 }
 
-void mcSensorHit::Draw()
+void muSensorHit::Draw()
 {
     G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
     if(pVVisManager){
@@ -101,7 +100,7 @@ void mcSensorHit::Draw()
 
 
 
-void mcSensorHit::Print()
+void muSensorHit::Print()
 {
     G4cout << "Copy Number: " << copyNO << G4endl; 
     G4cout << "TrackID: " << trackID << G4endl; 

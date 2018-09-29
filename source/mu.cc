@@ -1,20 +1,20 @@
 // ------------------------------------ //
-// mc.cc
-// Geant4 example for experiment
-// Author: Mizukoshi keita
-// 2018 July 25
+// mu.cc
+// Geant4 example for muography
+// Developer: Yuri Yoshihara
+// 2018 Sep 29
 // ------------------------------------ //
 
-#include "mcDetectorConstruction.hh"
-#include "mcPhysicsList.hh"
-#include "mcPrimaryGeneratorAction.hh"
-#include "mcRunAction.hh"
-#include "mcEventAction.hh"
-#include "mcParticleGun.hh"
-#include "mcParticleGunMessenger.hh"
-#include "mcAnalyzer.hh"
+#include "muDetectorConstruction.hh"
+#include "muPhysicsList.hh"
+#include "muPrimaryGeneratorAction.hh"
+#include "muRunAction.hh"
+#include "muEventAction.hh"
+#include "muParticleGun.hh"
+#include "muParticleGunMessenger.hh"
+#include "muAnalyzer.hh"
 
-#include "mcRunManager.hh"
+#include "muRunManager.hh"
 
 #include "G4UImanager.hh"
 #include "G4VisExecutive.hh"
@@ -41,15 +41,15 @@ int main(int argc,char** argv)
     G4Random::setTheEngine(new CLHEP::RanecuEngine);
     
     // Construct the default run manager
-    mcRunManager * runManager = new mcRunManager;
+    muRunManager * runManager = new muRunManager;
     
     // Construct the analyzer
-    mcAnalyzer* analyzer = new mcAnalyzer();
+    muAnalyzer* analyzer = new muAnalyzer();
     analyzer->SetInit(true, "out.root");
     analyzer->Init();
     
     // Set mandatory initialization classes
-    mcDetectorConstruction* detector = new mcDetectorConstruction();
+    muDetectorConstruction* detector = new muDetectorConstruction();
     detector->SetAnalyzer(analyzer);
     runManager->SetUserInitialization(detector);
     
@@ -59,16 +59,16 @@ int main(int argc,char** argv)
     runManager->SetUserInitialization(physicsList);
     
     // Set user action classes
-    G4VUserPrimaryGeneratorAction* gen_action = new mcPrimaryGeneratorAction(detector);
+    G4VUserPrimaryGeneratorAction* gen_action = new muPrimaryGeneratorAction(detector);
     runManager->SetUserAction(gen_action);
     
-    mcRunAction* run_action = new mcRunAction;
+    muRunAction* run_action = new muRunAction;
     runManager->SetUserAction(run_action);
     
-    mcEventAction* event_action = new mcEventAction(run_action);
+    muEventAction* event_action = new muEventAction(run_action);
     runManager->SetUserAction(event_action);
     
-    //mcSteppingAction* stepping_action = new mcSteppingAction();
+    //muSteppingAction* stepping_action = new muSteppingAction();
     //runManager->SetUserAction(stepping_action);
     
     //Initialize G4 kernel

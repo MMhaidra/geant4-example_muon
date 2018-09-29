@@ -1,9 +1,9 @@
-#ifndef mcSensorSD_h
-#define mcSensorSD_h 1
+#ifndef muSensorSD_h
+#define muSensorSD_h 1
 
 #include "G4VSensitiveDetector.hh"
-#include "mcSensorHit.hh"
-#include "mcAnalyzer.hh"
+#include "muSensorHit.hh"
+#include "muAnalyzer.hh"
 
 #include <vector>
 
@@ -14,13 +14,13 @@ class G4Step;
 class G4HCofThisEvent;
 
 
-class mcSensorSD : public G4VSensitiveDetector
+class muSensorSD : public G4VSensitiveDetector
 {
 public:
-    mcSensorSD(G4String);
-    ~mcSensorSD();
+    muSensorSD(G4String);
+    ~muSensorSD();
     
-    mcAnalyzer* analyzer;
+    muAnalyzer* analyzer;
     
     void Initialize(G4HCofThisEvent*);
     G4bool ProcessHits(G4Step*, G4TouchableHistory*);
@@ -30,11 +30,11 @@ public:
     G4double GetTimeResolution()  const {return tResolution;}
     
     static const G4String& GetCollectionName() {return HCname;}
-    void SetAnalyzer(mcAnalyzer*);
+    void SetAnalyzer(muAnalyzer*);
     
     
 private:
-    mcSensorHitsCollection* sensorCollection;    
+    muSensorHitsCollection* sensorCollection;    
     G4double eThreshold;
     G4double tResolution;
     

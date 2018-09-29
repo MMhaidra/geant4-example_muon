@@ -1,17 +1,17 @@
-#ifndef mcPhysicsList_h
-#define mcPhysicsList_h 1
+#ifndef muPhysicsList_h
+#define muPhysicsList_h 1
 
 #include "G4VUserPhysicsList.hh"
 #include "globals.hh"
 
 
-class mcPhysicsList: public G4VUserPhysicsList
+class muPhysicsList: public G4VUserPhysicsList
 {
     public:
         //! Constructor
-        mcPhysicsList();
+        muPhysicsList();
         //! Destructor
-        ~mcPhysicsList();
+        ~muPhysicsList();
     
     protected:
         // Construct particle and physics

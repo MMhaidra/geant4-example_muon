@@ -1,7 +1,7 @@
 
 
-#ifndef mcRunAction_h
-#define mcRunAction_h 1
+#ifndef muRunAction_h
+#define muRunAction_h 1
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"
@@ -9,11 +9,11 @@
 
 class G4Run;
 
-class mcRunAction : public G4UserRunAction
+class muRunAction : public G4UserRunAction
 {
 public:
-    mcRunAction();
-    ~mcRunAction();
+    muRunAction();
+    ~muRunAction();
     
 public:
     void BeginOfRunAction(const G4Run*);

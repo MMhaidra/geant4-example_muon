@@ -1,6 +1,6 @@
 
-#ifndef mcSensorHit_h
-#define mcSensorHit_h 1
+#ifndef muSensorHit_h
+#define muSensorHit_h 1
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
@@ -8,15 +8,15 @@
 #include "G4ThreeVector.hh"
 #include "G4Track.hh"
 
-class mcSensorHit : public G4VHit
+class muSensorHit : public G4VHit
 {
 public:
     
-    mcSensorHit();
-    ~mcSensorHit();
-    mcSensorHit(const mcSensorHit&);
-    const mcSensorHit& operator=(const mcSensorHit&);
-    G4int operator==(const mcSensorHit&) const;
+    muSensorHit();
+    ~muSensorHit();
+    muSensorHit(const muSensorHit&);
+    const muSensorHit& operator=(const muSensorHit&);
+    G4int operator==(const muSensorHit&) const;
     
     inline void* operator new(size_t);
     inline void  operator delete(void*);
@@ -54,22 +54,22 @@ private:
 };
 
 
-typedef G4THitsCollection<mcSensorHit> mcSensorHitsCollection;
+typedef G4THitsCollection<muSensorHit> muSensorHitsCollection;
 
-extern G4Allocator<mcSensorHit> mcSensorHitAllocator;
+extern G4Allocator<muSensorHit> muSensorHitAllocator;
 
 
-inline void* mcSensorHit::operator new(size_t)
+inline void* muSensorHit::operator new(size_t)
 {
     void *aHit;
-    aHit = (void *) mcSensorHitAllocator.MallocSingle();
+    aHit = (void *) muSensorHitAllocator.MallocSingle();
     return aHit;
 }
 
 
-inline void mcSensorHit::operator delete(void *aHit)
+inline void muSensorHit::operator delete(void *aHit)
 {
-    mcSensorHitAllocator.FreeSingle((mcSensorHit*) aHit);
+    muSensorHitAllocator.FreeSingle((muSensorHit*) aHit);
 }
 
 

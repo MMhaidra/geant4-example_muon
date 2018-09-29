@@ -1,7 +1,7 @@
-#ifndef mcDetectorConstruction_h
-#define mcDetectorConstruction_h 1
+#ifndef muDetectorConstruction_h
+#define muDetectorConstruction_h 1
 
-#include "mcAnalyzer.hh"
+#include "muAnalyzer.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 #include "G4NistManager.hh" // [yy]
@@ -13,12 +13,12 @@ class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4Material;
 
-class mcDetectorConstruction : public G4VUserDetectorConstruction
+class muDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
     
-    mcDetectorConstruction();
-    ~mcDetectorConstruction();
+    muDetectorConstruction();
+    ~muDetectorConstruction();
     
 public:
     
@@ -28,7 +28,7 @@ public:
     
     const G4VPhysicalVolume* GetSensor()     const {return physSensor;};
     
-    void SetAnalyzer(mcAnalyzer*);
+    void SetAnalyzer(muAnalyzer*);
     
     
 private:
@@ -43,7 +43,7 @@ private:
     G4Material* GAGG;   // [yy]
     
     void DefineMaterials();
-    mcAnalyzer* analyzer;
+    muAnalyzer* analyzer;
 
 };
 

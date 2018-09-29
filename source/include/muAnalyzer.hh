@@ -1,12 +1,6 @@
-//
-//  mcAnalyzer.hh
-//  mc
-//
-//  Created by Mizukoshi Keita on 2018/07/28.
-//
 
-#ifndef mcAnalyzer_hh
-#define mcAnalyzer_hh
+#ifndef muAnalyzer_hh
+#define muAnalyzer_hh
 
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
@@ -21,12 +15,12 @@
 #include "TString.h"
 
 
-class mcAnalyzer
+class muAnalyzer
 {
 public:
-    mcAnalyzer();
-    ~mcAnalyzer();
-    mcAnalyzer(const mcAnalyzer&);
+    muAnalyzer();
+    ~muAnalyzer();
+    muAnalyzer(const muAnalyzer&);
     
     void SetInit(G4bool, TString);
     
@@ -67,4 +61,4 @@ private:
 };
 
 
-#endif /* mcAnalyzer_hh */
+#endif /* muAnalyzer_hh */

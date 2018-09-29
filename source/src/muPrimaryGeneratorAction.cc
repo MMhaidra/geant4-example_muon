@@ -1,6 +1,6 @@
-#include "mcPrimaryGeneratorAction.hh"
-#include "mcParticleGun.hh"
-#include "mcDetectorConstruction.hh"
+#include "muPrimaryGeneratorAction.hh"
+#include "muParticleGun.hh"
+#include "muDetectorConstruction.hh"
 
 #include "G4Event.hh"
 #include "G4MuonMinus.hh"
@@ -12,11 +12,10 @@
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 
-mcPrimaryGeneratorAction::mcPrimaryGeneratorAction(const mcDetectorConstruction* mcDC)
+muPrimaryGeneratorAction::muPrimaryGeneratorAction(const muDetectorConstruction* muDC)
 :particleTable(G4ParticleTable::GetParticleTable())
-//,mcDetector(mcDC)
 {
-    particleGun = new mcParticleGun();
+    particleGun = new muParticleGun();
     G4ParticleDefinition* particle = particleTable->FindParticle("geantino");
     particleGun->SetParticleDefinition(particle);
     particleGun->SetParticleMomentumDirection(G4ThreeVector(1.0,0.0,0.0));
@@ -28,14 +27,14 @@ mcPrimaryGeneratorAction::mcPrimaryGeneratorAction(const mcDetectorConstruction*
 
 
 
-mcPrimaryGeneratorAction::~mcPrimaryGeneratorAction()
+muPrimaryGeneratorAction::~muPrimaryGeneratorAction()
 {
     delete particleGun;
 }
 
 
 
-void mcPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
+void muPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
     particleGun->GeneratePrimaryVertex(anEvent);
     

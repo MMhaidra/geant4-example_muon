@@ -1,6 +1,6 @@
-#include "mcParticleGun.hh"
-#include "mcParticleGunMessenger.hh"
-#include "mcDetectorConstruction.hh"
+#include "muParticleGun.hh"
+#include "muParticleGunMessenger.hh"
+#include "muDetectorConstruction.hh"
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -19,7 +19,7 @@
 
 using CLHEP::RandFlat;
 
-mcParticleGun::mcParticleGun()
+muParticleGun::muParticleGun()
 :G4ParticleGun(1),
 particleTable(G4ParticleTable::GetParticleTable()),
 positionFlag(0),
@@ -27,7 +27,7 @@ particleFlag(0),
 monoEnergy(1.0*keV),pMessenger(0)
 
 {
-    pMessenger = new mcParticleGunMessenger(this);
+    pMessenger = new muParticleGunMessenger(this);
     
     cosThetaMax = 10./17.;
     
@@ -91,12 +91,12 @@ monoEnergy(1.0*keV),pMessenger(0)
     
 }
 
-mcParticleGun::~mcParticleGun()
+muParticleGun::~muParticleGun()
 {
     delete pMessenger;
 }
 
-void mcParticleGun::GeneratePrimaryVertex(G4Event* anEvent)
+void muParticleGun::GeneratePrimaryVertex(G4Event* anEvent)
 {
     G4ThreeVector vPos;
     if(positionFlag == Top)				vPos = PutTop();
@@ -163,7 +163,7 @@ void mcParticleGun::GeneratePrimaryVertex(G4Event* anEvent)
     anEvent->AddPrimaryVertex(vertex);
 }
 
-void mcParticleGun::GenerateNeutron(G4PrimaryParticle* neutron[1])
+void muParticleGun::GenerateNeutron(G4PrimaryParticle* neutron[1])
 {
     G4ParticleDefinition* pD = particleTable->FindParticle("neutron");
     neutron[0] = new G4PrimaryParticle(pD);
@@ -171,7 +171,7 @@ void mcParticleGun::GenerateNeutron(G4PrimaryParticle* neutron[1])
     neutron[0]->SetMomentumDirection(G4ThreeVector(0,0,-1.0));
 }
 
-void mcParticleGun::GenerateFluxNeutron(G4PrimaryParticle* neutron[1],G4ThreeVector vPos)
+void muParticleGun::GenerateFluxNeutron(G4PrimaryParticle* neutron[1],G4ThreeVector vPos)
 {
     G4ParticleDefinition* pD = particleTable->FindParticle("neutron");
     neutron[0] = new G4PrimaryParticle(pD);
@@ -198,7 +198,7 @@ void mcParticleGun::GenerateFluxNeutron(G4PrimaryParticle* neutron[1],G4ThreeVec
     neutron[0]->SetMomentumDirection(momVec);
 }
 
-void mcParticleGun::GenerateFluxNeutronSp(G4PrimaryParticle* neutron[1],G4ThreeVector vPos)
+void muParticleGun::GenerateFluxNeutronSp(G4PrimaryParticle* neutron[1],G4ThreeVector vPos)
 {
     G4ParticleDefinition* pD = particleTable->FindParticle("neutron");
     neutron[0] = new G4PrimaryParticle(pD);
@@ -226,7 +226,7 @@ void mcParticleGun::GenerateFluxNeutronSp(G4PrimaryParticle* neutron[1],G4ThreeV
     neutron[0]->SetMomentumDirection(momVec);
 }
 
-void mcParticleGun::GenerateFission(G4PrimaryParticle* neutron[1])
+void muParticleGun::GenerateFission(G4PrimaryParticle* neutron[1])
 {
     G4ParticleDefinition* pD = particleTable->FindParticle("neutron");
     neutron[0] = new G4PrimaryParticle(pD);
@@ -245,7 +245,7 @@ void mcParticleGun::GenerateFission(G4PrimaryParticle* neutron[1])
     
     neutron[0]->SetMomentumDirection(G4ThreeVector(px, py, pz));
 }
-void mcParticleGun::GenerateMuon(G4PrimaryParticle* muon[1])
+void muParticleGun::GenerateMuon(G4PrimaryParticle* muon[1])
 {
     G4ParticleDefinition* pD = particleTable->FindParticle("mu-");
     muon[0] = new G4PrimaryParticle(pD);
@@ -254,7 +254,7 @@ void mcParticleGun::GenerateMuon(G4PrimaryParticle* muon[1])
     muon[0]->SetKineticEnergy( LogLogInterpolatorCalculate(prob) * GeV); //real spectrum
 }
 
-G4double mcParticleGun::LogLogInterpolatorCalculate(G4double x){
+G4double muParticleGun::LogLogInterpolatorCalculate(G4double x){
     
     G4double value = 0;
     
@@ -282,7 +282,7 @@ G4double mcParticleGun::LogLogInterpolatorCalculate(G4double x){
 
 
 
-G4double mcParticleGun::LogLogInterpolatorCalculateSp(G4double x){
+G4double muParticleGun::LogLogInterpolatorCalculateSp(G4double x){
     
     G4double value = 0;
     
@@ -308,7 +308,7 @@ G4double mcParticleGun::LogLogInterpolatorCalculateSp(G4double x){
     return value;
 }
 
-G4double mcParticleGun::LogLogInterpolatorCalculateFission(G4double x){
+G4double muParticleGun::LogLogInterpolatorCalculateFission(G4double x){
     
     G4double value = 0;
     
@@ -334,7 +334,7 @@ G4double mcParticleGun::LogLogInterpolatorCalculateFission(G4double x){
     return value;
 }
 
-void mcParticleGun::GenerateTwoGamma(G4PrimaryParticle* gamma[2])
+void muParticleGun::GenerateTwoGamma(G4PrimaryParticle* gamma[2])
 {
     G4ParticleDefinition* pD = particleTable->FindParticle("gamma");
     gamma[0] = new G4PrimaryParticle(pD);
@@ -360,7 +360,7 @@ void mcParticleGun::GenerateTwoGamma(G4PrimaryParticle* gamma[2])
     gamma[1]->SetPolarization(G4ThreeVector(px, py, pz));
 }
 
-void mcParticleGun::GenerateThreeGamma(G4PrimaryParticle* gamma[3])
+void muParticleGun::GenerateThreeGamma(G4PrimaryParticle* gamma[3])
 {
     G4ParticleDefinition* pD = particleTable->FindParticle("gamma");
     gamma[0] = new G4PrimaryParticle(pD);
@@ -415,7 +415,7 @@ void mcParticleGun::GenerateThreeGamma(G4PrimaryParticle* gamma[3])
 }
 
 
-void mcParticleGun::GenerateGamma1275(G4PrimaryParticle* gamma[1])
+void muParticleGun::GenerateGamma1275(G4PrimaryParticle* gamma[1])
 {
     G4ParticleDefinition* pD = particleTable->FindParticle("gamma");
     gamma[0] = new G4PrimaryParticle(pD);
@@ -434,7 +434,7 @@ void mcParticleGun::GenerateGamma1275(G4PrimaryParticle* gamma[1])
     
 }
 
-void mcParticleGun::GeneratePositron(G4PrimaryParticle* positron[1])
+void muParticleGun::GeneratePositron(G4PrimaryParticle* positron[1])
 {
     G4cout <<"GeneratePositron : cosThetaMax=" << cosThetaMax << G4endl;
     
@@ -465,16 +465,16 @@ void mcParticleGun::GeneratePositron(G4PrimaryParticle* positron[1])
 
 
 
-const G4ThreeVector& mcParticleGun::PutCentre(){
+const G4ThreeVector& muParticleGun::PutCentre(){
     static G4ThreeVector vPos(0.0,0.0,0.0);
     return vPos;
 }
 
-const G4ThreeVector& mcParticleGun::PutTop(){
+const G4ThreeVector& muParticleGun::PutTop(){
     static G4ThreeVector vPos(0.0,0.0,49.9*cm);
     return vPos;
 }
-const G4ThreeVector& mcParticleGun::PutFlux(){
+const G4ThreeVector& muParticleGun::PutFlux(){
     G4double radius = 40*cm;
     G4double phi = RandFlat::shoot(0.0,twopi);
     G4double theta = RandFlat::shoot(0.0,pi);

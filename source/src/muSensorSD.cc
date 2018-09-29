@@ -1,5 +1,4 @@
-
-#include "mcSensorSD.hh"
+#include "muSensorSD.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
@@ -8,7 +7,7 @@
 
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
-#include "mcAnalyzer.hh"
+#include "muAnalyzer.hh"
 
 #include <iostream>
 #include <vector>
@@ -18,32 +17,31 @@
 
 /////////////////////////////////////////////////////
 
-mcSensorSD::mcSensorSD(G4String name)
+muSensorSD::muSensorSD(G4String name)
 :G4VSensitiveDetector(name)
 {
     //G4String HCname;
     collectionName.insert("sensorCollection");
   
     eThreshold = 10.0 * eV;
-    //tResolution= 300.0 * ns; //[yy]
     
 }
 
 /////////////////////////////////////////////////////
 
-mcSensorSD::~mcSensorSD()
+muSensorSD::~muSensorSD()
 { 
 }
 
-void mcSensorSD::SetAnalyzer(mcAnalyzer* analyzer_in){
+void muSensorSD::SetAnalyzer(muAnalyzer* analyzer_in){
     analyzer = analyzer_in;
 }
 
 /////////////////////////////////////////////////////
 
-void mcSensorSD::Initialize(G4HCofThisEvent* HCE)
+void muSensorSD::Initialize(G4HCofThisEvent* HCE)
 {
-    sensorCollection = new mcSensorHitsCollection
+    sensorCollection = new muSensorHitsCollection
     (SensitiveDetectorName,collectionName[0]);
     static G4int HCID = -1;
     if(HCID<0)
@@ -54,7 +52,7 @@ void mcSensorSD::Initialize(G4HCofThisEvent* HCE)
 
 /////////////////////////////////////////////////////
 
-G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
+G4bool muSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 {
     
     const G4Track * aTrack =  aStep->GetTrack();
@@ -75,17 +73,12 @@ G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     for (G4int iHit=0; (iHit<NbHits) && (!found) ;iHit++) {
         found = (copyNO == (*sensorCollection)[iHit]->GetCopyNO() ) ;
         if (found) {
-            
-            // check time
-            //if (std::abs(time-(*sensorCollection)[iHit]->GetTime()) < tResolution) { //[yy]
-                // merge hit
-                (*sensorCollection)[iHit]->AddEdep(eLoss);
-                return true;
-            //} // [yy]
+            (*sensorCollection)[iHit]->AddEdep(eLoss);
+            return true;
         }
     }
     
-    mcSensorHit* newHit = new mcSensorHit();
+    muSensorHit* newHit = new muSensorHit();
     G4double eIn = aStep->GetPreStepPoint()->GetKineticEnergy();
     newHit->Set(copyNO, aTrack, eLoss, eIn);
     sensorCollection->insert( newHit );
@@ -95,7 +88,7 @@ G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 
 ///////////////////////////////////////////////////////
 
-void mcSensorSD::EndOfEvent(G4HCofThisEvent* HCE)
+void muSensorSD::EndOfEvent(G4HCofThisEvent* HCE)
 {
     G4int NbHits = sensorCollection->entries();
     if (verboseLevel>0) {
@@ -118,7 +111,7 @@ void mcSensorSD::EndOfEvent(G4HCofThisEvent* HCE)
     std::vector<G4int> particleID_out;
     
     for (G4int i=0;i<NbHits;i++){
-        mcSensorHit* hit = (*sensorCollection)[i];
+        muSensorHit* hit = (*sensorCollection)[i];
         if (verboseLevel>1) hit->Print();
         
         // output hits other than trigger counters

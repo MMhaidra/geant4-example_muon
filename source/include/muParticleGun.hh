@@ -1,5 +1,5 @@
-#ifndef mcParticleGun_h
-#define mcParticleGun_h 1
+#ifndef muParticleGun_h
+#define muParticleGun_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
@@ -12,16 +12,16 @@
 
 class G4ParticleTable;
 class G4Event;
-class mcDetectorConstraction;
-class mcParticleGunMessenger;
+class muDetectorConstraction;
+class muParticleGunMessenger;
 
 
-class mcParticleGun : public G4ParticleGun
+class muParticleGun : public G4ParticleGun
 {
-    friend class mcParticleGunMessenger;
+    friend class muParticleGunMessenger;
 public:
-    mcParticleGun();
-    ~mcParticleGun();
+    muParticleGun();
+    ~muParticleGun();
     
 public:
     virtual void GeneratePrimaryVertex(G4Event*);
@@ -83,7 +83,7 @@ private:
     std::vector<long double> fissionPDF;
     
     G4ParticleTable*					particleTable;
-    const mcDetectorConstraction*		mcDC;
+    const muDetectorConstraction*		muDC;
     
     G4int positionFlag;
     enum{ UserPos=0, Top, Centre,flux};
@@ -91,7 +91,7 @@ private:
     enum{ User=0, Muon, Neutron,fluxNeutron,fluxNeutronSp,fission, positron, gamma2, gamma3, gamma1275};
     G4double monoEnergy;
     
-    mcParticleGunMessenger*	pMessenger;
+    muParticleGunMessenger*	pMessenger;
     
     
 };
