@@ -52,52 +52,39 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     //------------------------------------------------
     
    // --- Overview of geometry ---
-   // world - module -  scabox  - Sensor* (copy no.: 0-63)
-   //                             absbox  - Sensor* (copy no: 64-127)    
+   // World - Module - Scabox  - Sensor* (copy no.: 0-63)
+   //                             Absbox  - Sensor* (copy no: 64-127)    
    // * means "Sensitive Detector"
    
    // --- Parameters for geometry ---
 
-   // world
+   // World
     G4double world_sizeX = 100*cm; 
     G4double world_sizeY = 100*cm; 
     G4double world_sizeZ = 100*cm;
 
-  // scabox
-  G4double scabox_sizeX =     30.0  *mm;  // > scavoxel_sizeX
-  G4double scabox_sizeY =     24.0  *mm;  // > scavoxel_pitchY*number_of_scavoxel_dimY
-  G4double scabox_sizeZ =     24.0  *mm;  // > scavoxel_pitchZ*number_of_scavoxel_dimZ
+  // Scabox/Absbox
+  G4double box_sizeX =     30.0  *mm;  // > voxel_sizeX
+  G4double box_sizeY =     24.0  *mm;  // > voxel_pitchY*number_of_voxel_dimY
+  G4double box_sizeZ =     24.0  *mm;  // > voxel_pitchZ*number_of_voxel_dimZ
 
   // Sensor
-  G4double scavoxel_sizeX =   30.0  *mm;
-  G4double scavoxel_sizeY =     2.0  *mm;
-  G4double scavoxel_sizeZ =     2.0  *mm;
-  G4double scavoxel_pitchY =    3.0  *mm;
-  G4double scavoxel_pitchZ =    3.0  *mm;
-  G4int number_of_scavoxel_dimY  =   8; 
-  G4int number_of_scavoxel_dimZ  =   8; 
-
-  // absbox
-  G4double absbox_sizeX =   30.0  *mm;  // > absvoxel_sizeX
-  G4double absbox_sizeY =   24.0  *mm;  // > absvoxel_pitchY*number_of_absvoxel_dimY
-  G4double absbox_sizeZ =   24.0  *mm;  // > absvoxel_pitchZ*number_of_absvoxel_dimZ
-  // absvoxel
-  G4double absvoxel_sizeX =    30.0  *mm;
-  G4double absvoxel_sizeY =      2.0  *mm;
-  G4double absvoxel_sizeZ =      2.0  *mm;
-  G4double absvoxel_pitchY =     3.0  *mm;
-  G4double absvoxel_pitchZ =     3.0  *mm;
-  G4int number_of_absvoxel_dimY  =  8; 
-  G4int number_of_absvoxel_dimZ  =  8;  
+  G4double voxel_sizeX =   30.0  *mm;
+  G4double voxel_sizeY =     2.0  *mm;
+  G4double voxel_sizeZ =     2.0  *mm;
+  G4double voxel_pitchY =    3.0  *mm;
+  G4double voxel_pitchZ =    3.0  *mm;
+  G4int number_of_voxel_dimY  =   8; 
+  G4int number_of_voxel_dimZ  =   8; 
     
     // distances
-    G4double distance_source_sca  = 100.0  *mm; // distance between scatter and origin(0,0,0)
+    G4double distance_source_sca  = 100.0  *mm; // distance between scabox and origin(0,0,0)
     G4double distance_sca_abs        =  80.0  *mm; // distance between absorber and scatter
 
     // module
-    G4double module_sizeX = scabox_sizeX+distance_sca_abs+absbox_sizeX; 
-    G4double module_sizeY = absbox_sizeY; // under supposition that scabox and absbos are same  
-    G4double module_sizeZ = absbox_sizeZ; // under supposition that scabox and absbos are same  
+    G4double module_sizeX = box_sizeX+distance_sca_abs+box_sizeX; 
+    G4double module_sizeY = box_sizeY; // under supposition that scabox and absbos are same  
+    G4double module_sizeZ = box_sizeZ; // under supposition that scabox and absbos are same  
 
     // if create multiple modules as circle
     //G4int number_of_modules = 1;  // 1: single Compton camera module
@@ -174,7 +161,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
   // solid definition (size)
   G4Box* solidScabox =    
     new G4Box("Scabox",                       // its name
-	      0.5*scabox_sizeX, 0.5*scabox_sizeY, 0.5*scabox_sizeZ); // its size
+	      0.5*box_sizeX, 0.5*box_sizeY, 0.5*box_sizeZ); // its size
   
   // logical volume definition (material)
   G4LogicalVolume* logicScabox =                         
@@ -183,7 +170,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
                         "Scabox");            // its name
 
   new G4PVPlacement(0,                        // no rotation
-                      G4ThreeVector(scabox_sizeX*0.5 - module_sizeX*0.5, 0, 0),  
+                      G4ThreeVector(box_sizeX*0.5 - module_sizeX*0.5, 0, 0),  
                       logicScabox,            // its logical volume
                       "Scabox",               // its name
                       logicModule,            // its mother  volume
@@ -196,7 +183,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
   // solid definition (size)
   G4Box* solidAbsbox =    
     new G4Box("Absbox",                       // its name
-	      0.5*absbox_sizeX, 0.5*absbox_sizeY, 0.5*absbox_sizeZ); // its size
+	      0.5*box_sizeX, 0.5*box_sizeY, 0.5*box_sizeZ); // its size
   
   // logical volume definition (material)
    G4LogicalVolume* logicAbsbox =                         
@@ -206,7 +193,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
 
   // physical volume definition (position, relation, copy number)
     new G4PVPlacement(0,                      // no rotation
-                      G4ThreeVector(module_sizeX*0.5 - absbox_sizeX*0.5, 0, 0),      
+                      G4ThreeVector(module_sizeX*0.5 - box_sizeX*0.5, 0, 0),      
                       logicAbsbox,            // its logical volume
                       "Absbox",               // its name
                       logicModule,             // its mother  volume
@@ -219,7 +206,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
   // solid definition (size)
   solidSensor =    
     new G4Box("Sensor",                       // its name
-	                    0.5*scavoxel_sizeX, 0.5*scavoxel_sizeY, 0.5*scavoxel_sizeZ); // its size
+	                    0.5*voxel_sizeX, 0.5*voxel_sizeY, 0.5*voxel_sizeZ); // its size
   
   // logical volume definition (material)
   logicSensor =                         
@@ -228,29 +215,29 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
                         "Sensor");            // its name
 
   // physical volume definition (position, relation, copy number)
-  for (G4int i = 0; i < number_of_scavoxel_dimY ; i++) {
-    for (G4int j = 0; j < number_of_scavoxel_dimZ ; j++) {
+  for (G4int i = 0; i < number_of_voxel_dimY ; i++) {
+    for (G4int j = 0; j < number_of_voxel_dimZ ; j++) {
        new G4PVPlacement(0,                     // no rotation
-                      G4ThreeVector(0,(i+0.5)*scavoxel_pitchY-scabox_sizeY*0.5,(j+0.5)*scavoxel_pitchZ-scabox_sizeZ*0.5), //location
+                      G4ThreeVector(0,(i+0.5)*voxel_pitchY-box_sizeY*0.5,(j+0.5)*voxel_pitchZ-box_sizeZ*0.5), //location
                       logicSensor,            // its logical volume
                       "Sensor",               // its name
                       logicScabox,              // its mother  volume
                       false,                    // no boolean operation
-                      i*number_of_scavoxel_dimZ+j,      // copy number
+                      i*number_of_voxel_dimZ+j,      // copy number
                       true);                       // checking overlaps
     }
   } 
 
   // physical volume definition (position, relation, copy number)
-  for (G4int i = 0; i < number_of_absvoxel_dimY ; i++) {
-    for (G4int j = 0; j < number_of_absvoxel_dimZ ; j++) {
+  for (G4int i = 0; i < number_of_voxel_dimY ; i++) {
+    for (G4int j = 0; j < number_of_voxel_dimZ ; j++) {
       new G4PVPlacement(0,                    // no rotation
-                      G4ThreeVector(0,(i+0.5)*absvoxel_pitchY-absbox_sizeY*0.5,(j+0.5)*absvoxel_pitchZ-absbox_sizeZ*0.5), // location
+                      G4ThreeVector(0,(i+0.5)*voxel_pitchY-box_sizeY*0.5,(j+0.5)*voxel_pitchZ-box_sizeZ*0.5), // location
                       logicSensor,          // its logical volume
                       "Sensor",             // its name
                       logicAbsbox,            // its mother  volume
                       false,                  // no boolean operation
-                      i*number_of_absvoxel_dimZ+j + number_of_scavoxel_dimY*number_of_scavoxel_dimZ,  // copy number
+                      i*number_of_voxel_dimZ+j + number_of_voxel_dimY*number_of_voxel_dimZ,  // copy number
                       true);        // checking overlaps
     }
   } 
@@ -286,7 +273,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
 
 ///////////////////////////////////////////////////////
 void mcDetectorConstruction::DefineMaterials(){ 
-    //This function illustrates the possible ways to define materials
+    /*This function illustrates the possible ways to define materials*/
     
     // Getting the NIST Material Manager [yy]
     
@@ -299,10 +286,6 @@ void mcDetectorConstruction::DefineMaterials(){
     G4double a; // mass of a mole
     G4double z; // mean number of protons
     G4double density;
-    G4int iz; // number of protons in an isotope
-    G4int n; // number of nucleons in an isotope
-    G4int in, ncomponents, natoms;
-    G4double abundance, fractionmass;
     
     // Define Elements
     
