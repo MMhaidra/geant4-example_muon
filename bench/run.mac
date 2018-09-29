@@ -23,7 +23,8 @@
 #/gun/position 0 0 1 cm
 #/gun/usr/particle 8
 
-/gun/particle mu-
+#/gun/particle mu-
+/gps/particle mu-
 /gun/energy 100. MeV
 
 /run/initialize
