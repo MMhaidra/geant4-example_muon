@@ -3,26 +3,29 @@
 #define muPrimaryGeneratorAction_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
+#include "G4ParticleGun.hh"
+#include "G4GeneralParticleSource.hh" // [yy] for gps
 #include "globals.hh"
 
 class G4ParticleGun;
-class G4ParticleTable;
+//class G4ParticleTable; //[yy]
+
 class G4Event;
 class muDetectorConstruction;
 
 class muPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
-public:
-    muPrimaryGeneratorAction(const muDetectorConstruction*);
-    ~muPrimaryGeneratorAction();
+    public:
+        muPrimaryGeneratorAction(); // [yy] to declear constructor
+        virtual ~muPrimaryGeneratorAction();
+        virtual void GeneratePrimaries(G4Event*);
+        //muPrimaryGeneratorAction(const muDetectorConstruction*);
     
-public:
-    void GeneratePrimaries(G4Event*);
+    private:
+        G4GeneralParticleSource* gpsParticleGun; // [yy] for gps
+        //G4ParticleGun*            particleGun;
+        //G4ParticleTable*			particleTable;
     
-private:
-    G4ParticleGun*              particleGun;	  //pointer a to G4  class
-    G4ParticleTable*			particleTable;
-    //const muDetectorConstruction* muDetector;
 };
 
 

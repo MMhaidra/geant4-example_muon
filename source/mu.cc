@@ -59,7 +59,8 @@ int main(int argc,char** argv)
     runManager->SetUserInitialization(physicsList);
     
     // Set user action classes
-    G4VUserPrimaryGeneratorAction* gen_action = new muPrimaryGeneratorAction(detector);
+    //G4VUserPrimaryGeneratorAction* gen_action = new muPrimaryGeneratorAction(detector); // [yy] for gps
+    G4VUserPrimaryGeneratorAction* gen_action = new muPrimaryGeneratorAction();
     runManager->SetUserAction(gen_action);
     
     muRunAction* run_action = new muRunAction;
