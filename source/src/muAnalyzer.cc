@@ -1,9 +1,3 @@
-//
-//  muAnalyzer.cc
-//  mc
-//
-//  Created by Mizukoshi Keita on 2018/07/28.
-//
 
 #include "muAnalyzer.hh"
 #include "G4SystemOfUnits.hh"
