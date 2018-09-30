@@ -88,15 +88,41 @@ $ ./mu
 ```
 $ ./mu run.mac > /dev/null 2>&1
 ```
-
 **\> /dev/null 2>&1** で、Terminal に本来表示されるべき文字をゴミ箱に移している（はず）。これにより、一般的な実行(```$ ./mu run.mac```)より早くシミュレーションが回せる。
+
 
 ## 3. 出力ファイル
 
-build/ に、out.root として出力される。
-解析には、ROOT が必要だが、PyROOTを使うと、ROOTファイルを読み込んで、Python でデータを解析できる。(まだ作ってない)
+build/ 下に、**out.root** として出力される。(ROOTのデータ形式)
+
+### 出力データの確認
+
+Terminal で ROOT を起動させ、データのツリー構造にアクセスする。
+
+```
+$ root out.root
+root [1] new TBrowser;
+```
+
+下の画面(ROOT)が起動するので、左側のROOT Files > out::root をダブルクリックし、その下に現れるtree::1をダブルクリックすると、左メニューに**nHit, x, y, z, time, eIn, eDep, TrackID, copyNo, particle**が表示されます。
+
+その中から見たい項目をさらにダブルクリックすると、右側にそのヒストグラムが表示されます。（図は、edep (各シンチに落としたエネルギー)のヒストグラム)
+
+![root_tbrowser](root.png)
+
+他の項目に関しては、出力データの解析ファイルができたら、まとめたいと思います。（それか、ソースファイルを読んでもらってもわかると思います）
+
+### 出力データの解析
+
+解析には、ROOT が必要だが、PyROOTを使えば、Python上で、ROOTファイルを読み込んでそのままデータを解析できる。(まだ作ってないので今度作る)
 
 
 ## 4. ジオメトリやソース(線源)の変更
 
 [source/AboutCode.md](https://github.com/yoshihara-yuli/geant4-example_muon/blob/master/source/AboutCode.md) を参照。
+
+## 5. その他
+
+このコードは開発途上である(実装できてない箇所がある)-> 詳細は [やり残し作業](https://github.com/yoshihara-yuli/geant4-example_muon/blob/master/geant4_todo.md)
+
+質問 --> yoshihara.yuli at gmail.com
