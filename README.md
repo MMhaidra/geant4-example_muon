@@ -15,7 +15,7 @@ Muography のための Geant4 example ソースファイル
 [http://osksn2.hep.sci.osaka-u.ac.jp/~taku/osx/install_root.html](http://osksn2.hep.sci.osaka-u.ac.jp/~taku/osx/install_root.html)
 
 #### Geant4
-以下のURLを参照して、インストールする。 
+以下のURLを参照して、インストールする。  
 [https://qiita.com/takenawa/items/3158afc19aaaffd767c5](https://qiita.com/takenawa/items/3158afc19aaaffd767c5)
  
 ## 2. ソースファイルのビルド
@@ -29,15 +29,15 @@ $ git clone https://github.com/yoshihara-yuli/geant4-example_muon
 次に、ダウンロードしたディレクトリに移動して、ビルド用ファイル(build/)を作成して、そこでソースファイルをcmake(gcmake)してから、ビルド(make)する。
 
 ```
-$ cd geant4-example_muon-master
+$ cd geant4-example_muon
 $ mkdir build
 $ cd build
 $ gcmake ../source
 $ make -j4
 ```
 
-gcmake は、Geant4 インストールの参考URLを元に設定する。
-（あるいは、cmakeをしても良い。)
+gcmake は、Geant4 インストールの参考 URL を元に設定する。
+（あるいは、普通に cmake をしても良い。)
 
 そうすると、実行ファイル ./mu が生成される。
 
@@ -48,7 +48,7 @@ $ cp ../bench/* .
 $ ./mu
 ```
 
-これで、新しい画面（後述）が立ち上がればOK。
+これで、GUI（Qt）が立ち上がる。
 
 
 ### 注意事項
@@ -67,8 +67,8 @@ $ ./mu
 ```
 ./mu
 ```
-これで、下のような画面が表示される。 これで、定義したジオメトリを確認できる。
-（図の青色がシンチレータ、白色が筐体を模擬したモジュール(今は空気)）
+これで、下のような画面が表示される。 定義したジオメトリを確認することができる。
+（図の青色がシンチレータ、白色が筐体を模擬したモジュール(今は空気)。）
 
 ![geometry_for_muography](geometry.png)
 
@@ -78,7 +78,7 @@ $ ./mu
 ```Outout
 /control/execute run.mac
 ```
-すると、ソースの定義も確認できる。
+すると、run.mac に指定してあるビーム数(/run/beamOn)だけ、ミューオン(赤色)が生成される。これで、ソース(線源)の定義も確認することができる。
 
 ### B: バッチモード
 
@@ -97,93 +97,6 @@ build/ に、out.root として出力される。
 解析には、ROOT が必要だが、PyROOTを使うと、ROOTファイルを読み込んで、Python でデータを解析できる。(まだ作ってない)
 
 
-
 ## 4. ジオメトリやソース(線源)の変更
 
-[AboutCode.md](https://github.com/yoshihara-yuli/geant4-example_muon/source/Aboutcode.md) を参照。
-
-## 2) ジオメトリの定義
-
-ジオメトリとは、検出器やその他の周辺物体を物質や大きさ、配置などを定義している。
-
-空気環境下において、EJ-200 のシンチレータ が 8x8 で配列されたアレイが、X軸方向に二つ並べて配置されている（下図）。
-
-
-それぞれのアレイを**Scabox**と**Absbox**と定義しており、これらは1つのモジュール (**Module**)の中に入っている。
-
- Scabox と Abscox は、それぞれ 8x8 の EJ-200 シンチレータ (**voxel**) から構成されていて、**voxel**の大きさは、2x2x30mmである。
-**voxel** は “sensitive detector”. にアサインされている。
-(See Geant4 guidance documents)
-
-![compton_geometry](geometry.png)
-
-## 3) ソースの定義
-
- 
- ソース(線源)は、**GPS (General Particle Source)** を用いて定義する。  
- GPS の設定は、**bench/run.mac** (マクロファイル) で行う。
- 
- GPS の参考になる資料は以下の二つ。
- 
- - **[Using GPS (The General Particle Source)](http://nngroup.physics.sunysb.edu/captain/reference/master/detSim/dox/detSimGPS.html)**  
-- **[Geant4 User Guide](ftp://ftp.iij.ad.jp/pub/linux/gentoo/distfiles/BookForAppliDev-4.10.2.pdf)**
- 
-
-## 4) Output Data
- The simulation results are output in **result.txt**.  
- (See **AboutCode.pdf** and the corresponding source files for more information.)
-
-
-
----
-
-# README
-
-Created on Sep.27th, 2018.
-
-# Reference
-[Geant4 Training at Desy Zeuthen, 2011/3 (Geant4 and Calorimetry in HEP)](https://www-zeuthen.desy.de/geant4/g4course2011/day1/overview.html) > [Day 2 Basics of Geant4](https://www-zeuthen.desy.de/geant4/g4course2011/day2/index.html) > [Proxesses and Particles](https://www-zeuthen.desy.de/geant4/g4course2011/day2/4_particlesNprocesses/index.html)
-
-
-# General Particle Source 
-- Good examples for use of GPS: **[Using GPS (The General Particle Source)](http://nngroup.physics.sunysb.edu/captain/reference/master/detSim/dox/detSimGPS.html)**
-- Detail explanation for GPS: **[Geant4 User Guide](ftp://ftp.iij.ad.jp/pub/linux/gentoo/distfiles/BookForAppliDev-4.10.2.pdf)**
-
-# How to get source files?
-```
-wget http://www.ifh.de/geant4/g4course2011/day2d.tgz
-```
-
-# How changed?
-
-- Geometry -> copy number:0-127 "Sensor", EJ-200
-- Muon beam
-
-## EJ-200/EJ-212
-Plastic scintillators such as EJ-200 often seems to be supposed as 'PVT bases'.  
-(ref: [murffer/DetectorSim/blob/master/ScintillationSlab/src/Material.cc](https://github.com/murffer/DetectorSim/blob/master/ScintillationSlab/src/Material.cc))  
-Thus, EJ-200 is defined as **G4\_PLASTIC\_SC\_VINYLTOLUENE** in this code.
-
-```
-EJ200 = nistMan->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
-
-```  
-  
-G4\_PLASTIC\_SC\_VINYLTOLUENE is defined at 1468-1470 Lines in **G4NistMaterialBuilder.cc**.  
-(ref: [Id: G4NistMaterialBuilder.cc 67044 2013-01-30 08:50:06Z gcosmo](http://www.apc.univ-paris7.fr/~franco/g4doxy/html/G4NistMaterialBuilder_8cc-source.html))
-
-```G4NistMaterialBuilder.cc
-AddMaterial("G4_PLASTIC_SC_VINYLTOLUENE", 1.032, 0, 64.7, 2);
-AddElementByWeightFraction( 1, 0.085);
-AddElementByWeightFraction( 6, 0.915);
-```
-
-Since EJ-200 and EJ-212 have similar properties, EJ-212 can be also defined as G4\_PLASTIC\_SC\_VINYLTOLUENE.
-
-# Schedule
-- Add muon libraries to PhysicsList 9/27
-- Generate muon beam 9/27
-- Change detector geometry 9/28
-- Change detector materials 9/28
-- remove unnecessary definitions 9/29
-- change file name 9/29
+[source/AboutCode.md](https://github.com/yoshihara-yuli/geant4-example_muon/blob/master/source/AboutCode.md) を参照。
