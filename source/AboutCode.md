@@ -1,71 +1,57 @@
 # AboutCode 
 
-## List of source codes
-- **UserDetectorConstruction (define geometry)**
-- UserEventAction
-- **UserPhysicsList (set physics list)**
-- **UserPrimaryGeneratorAction (define source)**
-- UserRunAction
-- UserStackingAction
-- ExN02TrackerHit
-- **ExN02TrackerSD (set output data you want)**  
 
-<font color="Blue">NOTE: The only **bold** codes should be modified according to your simulation.</font>
+## ジオメトリの定義
 
--
-### 1) UserDetectorConstruction
- See geometry tutorial [here](https://geant4.web.cern.ch/collaboration/working_groups/geometry) for detail.
+ジオメトリとは、検出器やその他の周辺物体を物質や大きさ、配置などを定義している。
 
- - Define materials for detector (**G4Material, G4Element**)  
- - Define detector geometry
-   - Start with its shape and size (**G4VSolid**)
-   - Add properties (**G4LogicalVolume**)
-   - Set position and rotation in another volume  (**G4VPhysicalVolume**)   
+空気環境下において、EJ-200 のシンチレータ が 8x8 で配列されたアレイが、X軸方向に二つ並べて配置されている（下図）。
 
- - Set Visualization attributes (**SetVisAttributes**)
- - Set sensitive detectors (**SetSensitiveDetector**)  
-   The default SDs are scavoxel and absvoxel.  
 
-<font color="Blue">Note: You should identify mulitple SDs from the same logic volume with **copy number of G4PVPlacement**</font>
+それぞれのアレイを**Scabox**と**Absbox**と定義しており、これらは1つのモジュール (**Module**)の中に入っている。
 
--
-### 2) UserEventAction
-You don't have to change this code.
+ Scabox と Abscox は、それぞれ 8x8 の EJ-200 シンチレータ (**voxel**) から構成されていて、**voxel**の大きさは、2x2x30mmである。
+**voxel** は “sensitive detector”. にアサインされている。
 
--
-### 3) UserPhysicsList
- - Choose physicslist (standard or penelope) (default: penelope)
- - Choose cut value (dafault: 1 mm)
+ジオメトリは、**source/src/muDetectorConstruction.cc (define geometry)** に定義されているので、ここを編集する。
 
--
-### 4) UserPrimaryGeneratorAction
- - Set particle (**particleTable->FindParticle**)
- - Set particle energy (**SetParticleEnergy**)
- - Set particle position (**SetParticlePosition**)
- - Set particle movement (**SetParticleMomentumDirection**)
+### 補足1) voxel の copy number 
 
-<font color="Blue">NOTE: **B3PrimaryGeneratorAction** is setting only for the first beam, and **GeneratePrimaries** is setting for the other all beams. If you want to set different particle movement for every beam, you can change the above parameters in **GeneratePrimaries**.</font>
+どのシンチに当たったかを特定するために、128 個 (8x8x2) のシンチには copy number (copyNo) が割り当てられている。  
 
--
-### 5) UserRunAction
-You don't have to change this code.
+ - scabox の voxel: 0-63
+ - absbox の voxel: 64-127
 
--
-### 6) UserStackingAction
-You don't have to change this code.
+データ解析の時に必要になる。
 
--
-### 7) ExN02TrackerHit
-You don't have to change this code.
+### 補足2) EJ-200/EJ-212 の定義
 
-### 8) ExN02TrackerSD
-You can extract the information from sensitive detectors you set in UserDetectorConstruction and output to textfile (result.txt). If you want to specific treatment here before extracting all raw data, you can use another output file (result2.txt).
 
-## Appendix 
-### 2.1. Random seeds
-You can have different random seeds everytime regardless of simulation code itself.
-If you want to use specific random seeds or fix random seeds for the all simulation, please modify example.cc.
+EJ-200/EJ-212 は、ここでは ビニルトルエン として定義している。  
+(参考: [murffer/DetectorSim/blob/master/ScintillationSlab/src/Material.cc](https://github.com/murffer/DetectorSim/blob/master/ScintillationSlab/src/Material.cc))  
 
-### 2.2 General Paricle Soure (GPS)
-If you want to change source condition in macro file, you need specific sentences in some files (please contact to Yoshihara, if you want to use)
-- - - - - - - - - - - - - - - - - - - - - - 
+```muDetectorConstruction.cc
+EJ200 = nistMan->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+```
+
+ちなみに、このビニルトルエン (G4\_PLASTIC\_SC\_VINYLTOLUENE) は  G4NistMaterialBuilder.cc の 1468-1470 行に定義してある。  
+(参考: [Id: G4NistMaterialBuilder.cc 67044 2013-01-30 08:50:06Z gcosmo](http://www.apc.univ-paris7.fr/~franco/g4doxy/html/G4NistMaterialBuilder_8cc-source.html))
+
+```G4NistMaterialBuilder.cc
+AddMaterial("G4_PLASTIC_SC_VINYLTOLUENE", 1.032, 0, 64.7, 2);
+AddElementByWeightFraction( 1, 0.085);
+AddElementByWeightFraction( 6, 0.915);
+```
+
+
+## ソース (線源) の定義
+
+ 
+ ソース (線源) は、**GPS (General Particle Source)** を用いて定義する。  
+ GPS の設定は、**bench/run.mac** (マクロファイル) で行う。
+ 
+ GPS の参考になる資料は以下の二つ。
+ 
+ - **[Using GPS (The General Particle Source)](http://nngroup.physics.sunysb.edu/captain/reference/master/detSim/dox/detSimGPS.html)**  
+- **[Geant4 User Guide](ftp://ftp.iij.ad.jp/pub/linux/gentoo/distfiles/BookForAppliDev-4.10.2.pdf)**
+
