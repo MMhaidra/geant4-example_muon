@@ -1,3 +1,4 @@
+
 # ----------------------------------------------
 # Settings
 # ----------------------------------------------
@@ -34,6 +35,8 @@
 # run
 # ----------------------------------------------
 
+/run/initialize
+
 # Number of beams generated
-/run/beamOn 10 # for check 
-#/run/beamOn 100000 # for batch mode 
+#/run/beamOn 100 # for check 
+/run/beamOn 100000 # for batch mode 
