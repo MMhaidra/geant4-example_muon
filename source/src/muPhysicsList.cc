@@ -36,6 +36,22 @@
 #include "G4hBremsstrahlung.hh"
 #include "G4hPairProduction.hh"
 
+#include "G4ComptonScattering.hh"
+#include "G4GammaConversion.hh"
+#include "G4PhotoElectricEffect.hh"
+#include "G4eMultipleScattering.hh"
+#include "G4MuMultipleScattering.hh"
+#include "G4hMultipleScattering.hh"
+#include "G4eIonisation.hh"
+#include "G4eBremsstrahlung.hh"
+#include "G4eplusAnnihilation.hh"
+#include "G4MuIonisation.hh"
+#include "G4MuBremsstrahlung.hh"
+#include "G4MuPairProduction.hh"
+#include "G4hIonisation.hh"
+//#include "G4UserSpecialCuts.hh"
+#include "G4StepLimiter.hh"
+
 muPhysicsList::muPhysicsList():  G4VUserPhysicsList()
 {
     defaultCutValue = 0.1*mm;
