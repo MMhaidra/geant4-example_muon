@@ -52,6 +52,10 @@ def main():
     
     plt.figure()
     plt.title("z [mm]")
+    plt.hist(total_z,bins=100)
+
+    plt.figure()
+    plt.title("Energy deposition [MeV]")
     plt.hist(total_edep,bins=100)
 
     plt.figure()
