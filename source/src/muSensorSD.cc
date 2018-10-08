@@ -133,6 +133,8 @@ void muSensorSD::EndOfEvent(G4HCofThisEvent* HCE)
         particleID_out.push_back(hit->GetPDGcode());
     }
     
+    if (NbHits!=0){ // [yy]
     analyzer->Fill(NbHits,x_out,y_out,z_out,time_out,eIn_out,eDep_out,trackID_out,copyNo_out,particleID_out);
+    }
     
 }
