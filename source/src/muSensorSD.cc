@@ -5,6 +5,8 @@
 #include "G4ThreeVector.hh"
 #include "G4SDManager.hh"
 #include "G4ios.hh"
+#include "G4EventManager.hh" // [yy]
+#include "G4Event.hh"  // [yy]
 
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
@@ -67,7 +69,7 @@ G4bool muSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     G4double eLoss = aStep->GetTotalEnergyDeposit();
     //if (eLoss <= 0.0 ) return false;
     G4double time = aTrack->GetGlobalTime();
-    
+    G4int eventNO = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID(); //[yy]
     G4int copyNO = aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
     G4int NbHits = sensorCollection->entries();
     G4bool found = false;
@@ -81,7 +83,7 @@ G4bool muSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     
     muSensorHit* newHit = new muSensorHit();
     G4double eIn = aStep->GetPreStepPoint()->GetKineticEnergy();
-    newHit->Set(copyNO, aTrack, eLoss, eIn);
+    newHit->Set(eventNO, copyNO, aTrack, eLoss, eIn);
     sensorCollection->insert( newHit );
     
     return true;
@@ -101,6 +103,7 @@ void muSensorSD::EndOfEvent(G4HCofThisEvent* HCE)
     G4bool isFirstHit = true;
     G4bool hasHit=false;
     
+    std::vector<G4int> event_out; // [yy]
     std::vector<G4double> x_out;
     std::vector<G4double> y_out;
     std::vector<G4double> z_out;
@@ -122,6 +125,7 @@ void muSensorSD::EndOfEvent(G4HCofThisEvent* HCE)
             hasHit = true;
         }
 
+        event_out.push_back(hit->GetEventNO());
         x_out.push_back(hit->GetPos().x()/mm);
         y_out.push_back(hit->GetPos().y()/mm);
         z_out.push_back(hit->GetPos().z()/mm);
@@ -134,7 +138,8 @@ void muSensorSD::EndOfEvent(G4HCofThisEvent* HCE)
     }
     
     if (NbHits!=0){ // [yy]
-    analyzer->Fill(NbHits,x_out,y_out,z_out,time_out,eIn_out,eDep_out,trackID_out,copyNo_out,particleID_out);
+    //analyzer->Fill(NbHits,x_out,y_out,z_out,time_out,eIn_out,eDep_out,trackID_out,copyNo_out,particleID_out);
+    analyzer->Fill(NbHits,event_out,x_out,y_out,z_out,time_out,eIn_out,eDep_out,trackID_out,copyNo_out,particleID_out); // [yy]
     }
     
 }

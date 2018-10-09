@@ -26,8 +26,9 @@ public:
     
 public:
     
-    void Set(int copy, const G4Track* track ,G4double eLoss, G4double valEIn);
+    void Set(int event, int copy, const G4Track* track ,G4double eLoss, G4double valEIn);
     
+    G4int GetEventNO()            const  { return eventNO; }; // [yy]
     G4int GetCopyNO()             const  { return copyNO; };
     G4int GetTrackID()            const  { return trackID; };
     G4int GetPDGcode()            const  { return codePDG; };
@@ -41,6 +42,7 @@ public:
     G4double GetEIn() const { return eIn;};
     
 private:
+    G4int         eventNO; // [yy]
     G4int         copyNO;
     G4int         trackID;
     G4int         codePDG;
@@ -49,8 +51,8 @@ private:
     G4ThreeVector momentum;
     G4ThreeVector pos;
     G4double      time;
-    G4double 		eDep;
-    G4double        eIn;
+    G4double 	  eDep;
+    G4double      eIn;
 };
 
 

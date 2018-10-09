@@ -38,6 +38,7 @@ private:
     muSensorHitsCollection* sensorCollection;    
     G4double eThreshold;
     G4double tResolution;
+    G4int event; // [yy]
     
     static const G4String HCname;
     

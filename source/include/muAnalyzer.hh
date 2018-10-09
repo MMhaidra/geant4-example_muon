@@ -27,7 +27,8 @@ public:
     
     TTree* getTree(){return tree;};
     void Init();
-    void Fill(int buf1,                     //nHit
+    void Fill(int buf0,                     //nHit [yy] modify
+              std::vector<G4int> buf1,   //event [yy] add
               std::vector<G4double> buf2,   //x
               std::vector<G4double> buf3,   //y
               std::vector<G4double> buf4,   //z
@@ -48,15 +49,27 @@ private:
     std::ofstream outFile;
 
     G4int nHit;
-    std::vector<G4double> x;
-    std::vector<G4double> y;
-    std::vector<G4double> z;
-    std::vector<G4double> time;
-    std::vector<G4double> eIn;
-    std::vector<G4double> eDep;
-    std::vector<G4int> trackID;
-    std::vector<G4int> copyNo;
-    std::vector<G4int> particleID;
+    G4int event; // [yy]
+    G4double x;
+    G4double y;
+    G4double z;
+    G4double time;
+    G4double eIn;
+    G4double eDep;
+    G4int trackID;
+    G4int copyNo;
+    G4int particleID;
+    
+    std::vector<G4int> eventbuf; // [yy]
+    std::vector<G4double> xbuf;  // [yy]
+    std::vector<G4double> ybuf;  // [yy]
+    std::vector<G4double> zbuf;  // [yy]
+    std::vector<G4double> timebuf;  // [yy]
+    std::vector<G4double> eInbuf;   // [yy]
+    std::vector<G4double> eDepbuf;  // [yy]
+    std::vector<G4int> trackIDbuf;  // [yy]
+    std::vector<G4int> copyNobuf;   // [yy]
+    std::vector<G4int> particleIDbuf;  // [yy]
     
 };
 

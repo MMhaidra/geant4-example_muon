@@ -93,7 +93,7 @@ $ ./mu run.mac > /dev/null 2>&1
 
 ## 3. 出力ファイル
 
-build/ 下に、**out.root** として出力される。(ROOTのデータ形式)
+build/ 下に、**out.root** と **out.txt** が出力される。2つは同じデータで形式フォーマットが違うだけ。
 
 ### 出力データの確認
 
@@ -104,18 +104,39 @@ $ root out.root
 root [1] new TBrowser;
 ```
 
-下の画面(ROOT)が起動するので、左側のROOT Files > out::root をダブルクリックし、その下に現れるtree::1をダブルクリックすると、左メニューに**nHit, x, y, z, time, eIn, eDep, TrackID, copyNo, particle**が表示されます。
+下の画面(ROOT)が起動するので、左側のROOT Files > out::root をダブルクリックし、その下に現れるtree::1をダブルクリックすると、左メニューに**event, nHit, x, y, z, time, eIn, eDep, TrackID, copyNo, particle**が表示される。
 
-その中から見たい項目をさらにダブルクリックすると、右側にそのヒストグラムが表示されます。（図は、edep (各シンチに落としたエネルギー)のヒストグラム)
+その中から見たい項目をさらにダブルクリックすると、右側にそのヒストグラムが表示される。（図は、edep (各シンチに落としたエネルギー)のヒストグラム)
 
 ![root_tbrowser](root.png)
 
-他の項目に関しては、出力データの解析ファイルができたら、まとめたいと思います。（それか、ソースファイルを読んでもらってもわかると思います）
+
+#### ステップ
+muSensorSD::ProcessHits では、ステップごとのイベントを、検出器の同一ピクセル (copyNo) ごとに集計している。（ステップの概念の参考はここら辺を読めばわかりそう → [[1]](http://www-geant4.kek.jp/lecture/2017.11/materials/L09_Scoring.pdf)[[2]](http://www-jlc.kek.jp/~hoshina/geant4/Geant4Lecture2003/5-2a.html) )
+
+#### データ
+ - event: 何番目のビームにより検出されたイベント（イベント番号)
+ - nHit: 同じビームで検出器の異なるピクセルで相互作用を起こした数
+ - copyNo: 相互作用を起こした検出器のピクセル(0-127)
+ - x,y,z: その検出器のピクセルで相互作用を起こした最後の場所
+ - time: その検出器のピクセルで相互作用を起こした最後のタイミング 
+ - eIn: その検出器のピクセルを抜ける際に通り抜ける粒子の持つ残りのエネルギー
+ - eDep: その検出器のピクセルに付与した全てのエネルギー
+ - TrackID: その検出器のピクセルで相互作用を起こした生成粒子の生成順位(ex: 1次粒子, 2次粒子)
+ - particle: その検出器のピクセルで相互作用を起こした粒子の種類 (ex: ミューオンは+13/-13, 電子は11, ガンマ線22 (参考は[[3]](https://agenda.infn.it/getFile.py/access?sessionId=26&resId=0&materialId=0&confId=12061))
+
+テキストファイルでは、1行 = 1イベントとなっている。
+同じ event (イベント番号) を持つイベントは、同じビームが入射したときに複数のピクセルに反応したイベント（ = 実験上では同時に発生したイベントと等価）である。
+また、nHit は、そのイベント番号のビームが、検出器の何箇所で相互作用を起こしたかを示している。
+
+主に解析で使うのは、**event, nHit, eDep, copyNo** あたりと思われる。
+**eIn, particle**あたりも余力があれば解析してみても良い。
 
 ### 出力データの解析
 
-解析には、ROOT が必要だが、PyROOTを使えば、Python上で、ROOTファイルを読み込んでそのままデータを解析できる。(まだ作ってないので今度作る)
+解析には、ROOT が必要だが、PyROOTを使えば、Python上で、ROOTファイルを読み込んでそのままデータを解析できる。
 
+ROOT の参考URL: [KamonoWiki](https://www-he.scphys.kyoto-u.ac.jp/member/shotakaha/dokuwiki/doku.php?id=toolbox:root:ttree:start)
 
 ## 4. ジオメトリやソース(線源)の変更
 

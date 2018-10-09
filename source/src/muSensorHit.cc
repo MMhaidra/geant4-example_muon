@@ -12,6 +12,7 @@ G4Allocator<muSensorHit> muSensorHitAllocator;
 
 
 muSensorHit::muSensorHit():
+eventNO(-1), // [yy]
 copyNO(-1),
 trackID(0),
 codePDG(0),
@@ -31,6 +32,7 @@ muSensorHit::~muSensorHit()
 muSensorHit::muSensorHit(const muSensorHit& right)
 : G4VHit()
 {
+    eventNO     = right.eventNO; // [yy]
     copyNO      = right.copyNO;
     trackID     = right.trackID;
     codePDG     = right.codePDG;
@@ -47,6 +49,7 @@ muSensorHit::muSensorHit(const muSensorHit& right)
 const muSensorHit& muSensorHit::operator=(const muSensorHit& right)
 {
     if (this != &right) {
+        eventNO     = right.eventNO; //[yy]
         copyNO      = right.copyNO;
         trackID     = right.trackID;
         codePDG     = right.codePDG;
@@ -69,10 +72,11 @@ G4int muSensorHit::operator==(const muSensorHit& right) const
 }
 
 
-void muSensorHit::Set(int copy, const G4Track* track,G4double eLoss, G4double valEIn)
+void muSensorHit::Set(int event, int copy, const G4Track* track,G4double eLoss, G4double valEIn)
 {
+    eventNO  = event; //[yy]
     copyNO   =  copy;
-    eDep		= eLoss;
+    eDep	 = eLoss;
     eIn      =  valEIn;
     trackID  =  track->GetTrackID();
     codePDG  =  track->GetDefinition()->GetPDGEncoding();
@@ -103,6 +107,7 @@ void muSensorHit::Draw()
 
 void muSensorHit::Print()
 {
+    G4cout << "Event Number: " << eventNO << G4endl; // [yy]
     G4cout << "Copy Number: " << copyNO << G4endl; 
     G4cout << "TrackID: " << trackID << G4endl; 
     G4cout << "PDG code: "<< codePDG << "  "
