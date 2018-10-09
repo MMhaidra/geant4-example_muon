@@ -134,9 +134,10 @@ muSensorSD::ProcessHits では、ステップごとのイベントを、検出�
 
 ### 出力データの解析
 
-解析には、ROOT が必要だが、PyROOTを使えば、Python上で、ROOTファイルを読み込んでそのままデータを解析できる。
+out.txt は、とりあえずどんな言語でも解析できるはず。
 
-ROOT の参考URL: [KamonoWiki](https://www-he.scphys.kyoto-u.ac.jp/member/shotakaha/dokuwiki/doku.php?id=toolbox:root:ttree:start)
+out.root の解析には、ROOT が必要だが、PyROOTを使えば、Python上で、ROOTファイルを読み込んでそのままデータを解析できる
+（ROOT の参考URL: [KamonoWiki](https://www-he.scphys.kyoto-u.ac.jp/member/shotakaha/dokuwiki/doku.php?id=toolbox:root:ttree:start)）。
 
 ## 4. ジオメトリやソース(線源)の変更
 
